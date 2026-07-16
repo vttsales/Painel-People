@@ -28,6 +28,20 @@
 }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;height:100%;overflow:hidden;}
+*{scrollbar-width:thin;scrollbar-color:var(--wine-bright) transparent;}
+*::-webkit-scrollbar{width:7px;height:7px;}
+*::-webkit-scrollbar-track{background:transparent;}
+*::-webkit-scrollbar-thumb{background:var(--wine-bright);border-radius:10px;}
+*::-webkit-scrollbar-thumb:hover{background:var(--gold);}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+select,.reset-btn,.tab-btn,.kpi-card,.panel,.chip,.chip button,.clear-all-chip,.upload-box{transition:all .2s ease;}
+.rank-bar-fill{transition:width .4s cubic-bezier(.22,.9,.3,1),background-color .3s ease;}
+.kpi-card{animation:fadeInUp .3s ease both;}
+.kpi-card:hover{transform:translateY(-2px);border-color:var(--wine-bright);}
+.panel{animation:fadeInUp .35s ease both;}
+.panel:hover{border-color:var(--border);}
+.tab-panel.active{animation:fadeInUp .3s ease both;}
+.chip{animation:fadeInUp .2s ease both;}
 body{
   background:
     radial-gradient(1200px 600px at 85% -10%, rgba(178,58,70,.22), transparent 60%),
@@ -87,19 +101,11 @@ select:focus{outline:none;border-color:var(--wine-bright);}
 }
 .reset-btn:hover{border-color:var(--bad);color:var(--bad);}
 
-.legend-note{margin-top:auto;padding-top:14px;border-top:1px solid var(--border-soft);font-size:10px;color:var(--text-dim);line-height:1.5;}
-.legend-note b{color:var(--text-mid);}
-
 /* MAIN */
 main{height:100vh;overflow:hidden;display:flex;flex-direction:column;padding:18px 24px 14px;min-width:0;}
 .topbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap;gap:10px;flex-shrink:0;}
 .topbar h1{font-size:19px;margin:0 0 2px;font-weight:700;}
 .topbar p{margin:0;color:var(--text-mid);font-size:12px;}
-.scope-pill{
-  font-size:10.5px;color:var(--gold);
-  background:rgba(217,169,78,.12);border:1px solid rgba(217,169,78,.3);
-  padding:5px 11px;border-radius:20px;white-space:nowrap;font-weight:600;
-}
 
 .tabs{display:flex;gap:6px;margin-bottom:0;flex-shrink:0;align-items:center;flex-wrap:wrap;}
 .active-filters{display:flex;gap:6px;align-items:center;margin:8px 0 14px;flex-shrink:0;flex-wrap:wrap;min-height:24px;}
@@ -160,7 +166,7 @@ main{height:100vh;overflow:hidden;display:flex;flex-direction:column;padding:18p
 .panel-title{font-size:13px;font-weight:700;}
 .panel-sub{font-size:10.5px;color:var(--text-dim);margin-top:1px;}
 
-.rank-list{flex:1;overflow-y:auto;min-height:0;}
+.rank-list{flex:1;overflow-y:auto;min-height:0;scroll-behavior:smooth;}
 .rank-row{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:11px;cursor:pointer;border-radius:6px;transition:.12s;}
 .rank-row:hover{background:var(--bg-card-hover);}
 .rank-row.dimmed{opacity:.35;}
@@ -178,12 +184,38 @@ thead th{
 tbody td{padding:6px 8px;border-bottom:1px solid var(--border-soft);color:var(--text-mid);white-space:nowrap;}
 tbody tr{cursor:pointer;transition:.12s;}
 tbody tr:hover td{background:var(--bg-card-hover);color:var(--text-hi);}
-.table-wrap{flex:1;overflow:auto;min-height:0;border-radius:var(--radius-sm);}
+.table-wrap{flex:1;overflow:auto;min-height:0;border-radius:var(--radius-sm);scroll-behavior:smooth;}
 .badge{padding:1px 7px;border-radius:9px;font-size:10px;font-weight:700;}
 
 .chart-box{position:relative;flex:1;min-height:0;}
 
 .row-2-bh{display:grid;grid-template-columns:1fr 1.4fr;gap:12px;flex:1;min-height:0;}
+
+/* RESPONSIVE */
+@media (max-width:1200px){
+  .kpi-grid{grid-template-columns:repeat(3,1fr);}
+}
+@media (max-width:1100px){
+  html,body{height:auto;overflow:auto;}
+  .app{grid-template-columns:1fr;height:auto;}
+  .sidebar{position:static;height:auto;overflow-y:visible;}
+  main{height:auto;overflow:visible;}
+  .dashboard.active{display:flex;}
+  .tab-panel.active{display:flex;}
+  .row-3{grid-template-columns:1fr;}
+  .row-2-bh{grid-template-columns:1fr;}
+  .rank-list{max-height:260px;}
+  .chart-box{height:240px;}
+  .table-wrap{max-height:320px;}
+}
+@media (max-width:640px){
+  main{padding:16px 16px 20px;}
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  .tabs{gap:5px;}
+  .tab-btn{padding:7px 12px;font-size:11.5px;}
+  .topbar h1{font-size:17px;}
+  .rank-name{flex-basis:100px;}
+}
 </style>
 </head>
 <body>
@@ -258,10 +290,6 @@ tbody tr:hover td{background:var(--bg-card-hover);color:var(--text-hi);}
       <select id="fCC"><option value="">Todos</option></select>
     </div>
     <button class="reset-btn" id="resetBtn">Limpar filtros</button>
-
-    <div class="legend-note">
-      <b>Como atualizar:</b> todo mês, gere a mesma planilha com a aba "Indicadores" preenchida e envie aqui. Nada é salvo — os dados ficam só nesta sessão.
-    </div>
   </aside>
 
   <main>
@@ -270,7 +298,6 @@ tbody tr:hover td{background:var(--bg-card-hover);color:var(--text-hi);}
         <h1>Bem-vindo(a) de volta</h1>
         <p>Acompanhe turnover, banco de horas e tempo de casa por diretoria, área e centro de custo.</p>
       </div>
-      <div class="scope-pill" id="scopePill">nenhum arquivo carregado</div>
     </div>
 
     <div class="empty-state" id="emptyState">
@@ -383,9 +410,22 @@ const COLS = {
   tempoCasa: "Tempo Médio de Casa (meses)", cultura: "Estágio de Cultura"
 };
 
+const CULTURE_COLORS = {
+  "Espírito de Fundador": '#B23A46',
+  "Influenciar e ser influenciado": '#D9A94E',
+  "Pedagogia da presença": '#8C6A6A',
+  "Delegação Planejada": '#4BB584'
+};
+const CULTURE_FALLBACK = '#6B7280';
+
 let RAW = [];
 let charts = {};
 let activeTab = 'tab1';
+if(typeof Chart !== 'undefined'){
+  Chart.defaults.animation.duration = 450;
+  Chart.defaults.animation.easing = 'easeOutQuart';
+  Chart.defaults.transitions.active.animation.duration = 250;
+}
 
 const fmtPct = v => (v*100).toFixed(1).replace('.', ',') + '%';
 const fmtInt = v => Math.round(v).toLocaleString('pt-BR');
@@ -431,7 +471,6 @@ function handleFile(e){
 
       RAW = rows;
       setStatus('✓ ' + file.name + ' · ' + rows.length + ' linhas', false);
-      document.getElementById('scopePill').textContent = file.name;
       document.getElementById('emptyState').style.display = 'none';
       document.getElementById('dashboard').classList.add('active');
       populateFilters();
@@ -673,16 +712,17 @@ function renderCultureChart(rows){
   rows.forEach(r => { const c = r[COLS.cultura]; if(c) counts[c] = (counts[c]||0)+1; });
   const labels = Object.keys(counts);
   const values = Object.values(counts);
-  const palette = ['#B23A46','#D9A94E','#8C6A6A','#4BB584'];
+  const colors = labels.map(l => CULTURE_COLORS[l] || CULTURE_FALLBACK);
   if(charts.culture){
     charts.culture.data.labels = labels;
     charts.culture.data.datasets[0].data = values;
+    charts.culture.data.datasets[0].backgroundColor = colors;
     charts.culture.update();
     return;
   }
   charts.culture = new Chart(document.getElementById('cultureChart'), {
     type:'doughnut',
-    data:{ labels, datasets:[{ data: values, backgroundColor: palette, borderColor: '#421621', borderWidth:3 }] },
+    data:{ labels, datasets:[{ data: values, backgroundColor: colors, borderColor: '#421621', borderWidth:3 }] },
     options:{
       maintainAspectRatio:false,
       onClick:(evt, els)=>{ if(els.length){ applyCultureFilter(charts.culture.data.labels[els[0].index]); } },
