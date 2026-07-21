@@ -34,7 +34,7 @@ html,body{margin:0;padding:0;height:100%;overflow:hidden;}
 *::-webkit-scrollbar-thumb{background:var(--wine-bright);border-radius:10px;}
 *::-webkit-scrollbar-thumb:hover{background:var(--gold);}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
-select,.reset-btn,.tab-btn,.kpi-card,.panel,.chip,.chip button,.clear-all-chip,.upload-box{transition:all .2s ease;}
+select,.reset-btn,.tab-btn,.kpi-card,.panel,.chip,.chip button,.clear-all-chip,.upload-box,input{transition:all .2s ease;}
 .rank-bar-fill{transition:width .4s cubic-bezier(.22,.9,.3,1),background-color .3s ease;}
 .kpi-card{animation:fadeInUp .3s ease both;}
 .kpi-card:hover{transform:translateY(-2px);border-color:var(--wine-bright);}
@@ -51,7 +51,39 @@ body{
   font-family:'Inter',-apple-system,sans-serif;
   height:100vh;
 }
-.app{display:grid;grid-template-columns:236px 1fr;height:100vh;overflow:hidden;}
+
+/* LOGIN */
+#loginScreen{
+  position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  z-index:100;background:
+    radial-gradient(1200px 600px at 85% -10%, rgba(178,58,70,.25), transparent 60%),
+    radial-gradient(900px 500px at -10% 10%, rgba(122,31,43,.22), transparent 55%),
+    var(--bg-deep);
+}
+.login-card{
+  width:340px;background:var(--bg-card);border:1px solid var(--border-soft);border-radius:var(--radius);
+  padding:30px 28px;animation:fadeInUp .35s ease both;
+}
+.login-logo{height:34px;width:auto;margin-bottom:18px;}
+.login-logo svg{height:34px;width:auto;display:block;}
+.login-card h1{font-size:17px;margin:0 0 4px;font-weight:700;}
+.login-card p{margin:0 0 22px;color:var(--text-mid);font-size:12px;}
+.login-field{margin-bottom:14px;}
+.login-field label{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-dim);font-weight:600;margin-bottom:6px;display:block;}
+.login-field input{
+  width:100%;background:var(--bg-panel);border:1px solid var(--border);color:var(--text-hi);
+  padding:10px 11px;border-radius:8px;font-size:13px;font-family:'Inter';
+}
+.login-field input:focus{outline:none;border-color:var(--wine-bright);}
+.login-btn{
+  width:100%;padding:11px;border-radius:9px;border:none;margin-top:6px;
+  background:linear-gradient(135deg,var(--wine-bright),var(--wine));color:#fff;font-weight:700;
+  font-size:13px;cursor:pointer;font-family:'Inter';
+}
+.login-btn:hover{filter:brightness(1.08);}
+.login-error{color:var(--bad);font-size:11.5px;margin-top:12px;min-height:14px;}
+.app{display:none;grid-template-columns:236px 1fr;height:100vh;overflow:hidden;}
+.app.active{display:grid;}
 
 /* SIDEBAR */
 .sidebar{
@@ -61,11 +93,22 @@ body{
   height:100vh; overflow-y:auto;
   display:flex; flex-direction:column;
 }
-.brand{display:flex;align-items:center;gap:9px;margin-bottom:20px;}
+.brand{display:flex;align-items:center;gap:9px;margin-bottom:16px;}
 .brand-mark{height:30px;width:auto;flex-shrink:0;}
 .brand-mark svg{height:30px;width:auto;display:block;}
 .brand-text{font-weight:700;font-size:13.5px;line-height:1.2;}
 .brand-text span{display:block;font-weight:400;font-size:10px;color:var(--text-dim);margin-top:2px;}
+
+.user-badge{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  background:rgba(217,169,78,.1);border:1px solid rgba(217,169,78,.3);border-radius:9px;
+  padding:9px 10px;margin-bottom:16px;
+}
+.user-badge-info{min-width:0;}
+.user-badge-name{font-size:11.5px;font-weight:700;color:var(--text-hi);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-badge-role{font-size:9.5px;color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-top:1px;}
+.logout-btn{background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:15px;padding:2px 4px;flex-shrink:0;}
+.logout-btn:hover{color:var(--bad);}
 
 .upload-box{
   display:flex;align-items:center;gap:10px;
@@ -94,12 +137,23 @@ select{
   background-repeat:no-repeat;background-position:right 10px center;
 }
 select:focus{outline:none;border-color:var(--wine-bright);}
+select:disabled{opacity:.6;cursor:not-allowed;}
 .reset-btn{
   width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);
   background:transparent;color:var(--text-mid);font-size:11.5px;cursor:pointer;margin-top:2px;
   transition:.15s;font-family:'Inter';font-weight:500;
 }
 .reset-btn:hover{border-color:var(--bad);color:var(--bad);}
+
+.admin-box{margin-top:auto;padding-top:16px;border-top:1px solid var(--border-soft);}
+.admin-box-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);font-weight:600;margin-bottom:8px;display:block;}
+.export-btn{
+  width:100%;padding:9px;border-radius:8px;border:1px solid rgba(217,169,78,.4);
+  background:rgba(217,169,78,.1);color:var(--gold);font-size:11.5px;cursor:pointer;
+  font-family:'Inter';font-weight:600;margin-bottom:6px;
+}
+.export-btn:hover{background:rgba(217,169,78,.2);}
+.admin-hint{font-size:9.5px;color:var(--text-dim);line-height:1.5;margin-top:6px;}
 
 /* MAIN */
 main{height:100vh;overflow:hidden;display:flex;flex-direction:column;padding:18px 24px 14px;min-width:0;}
@@ -197,7 +251,7 @@ tbody tr:hover td{background:var(--bg-card-hover);color:var(--text-hi);}
 }
 @media (max-width:1100px){
   html,body{height:auto;overflow:auto;}
-  .app{grid-template-columns:1fr;height:auto;}
+  .app.active{display:grid;grid-template-columns:1fr;height:auto;}
   .sidebar{position:static;height:auto;overflow-y:visible;}
   main{height:auto;overflow:visible;}
   .dashboard.active{display:flex;}
@@ -219,12 +273,10 @@ tbody tr:hover td{background:var(--bg-card-hover);color:var(--text-hi);}
 </style>
 </head>
 <body>
-<div class="app">
 
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="brand-mark">
-        <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="10 220 980 550">
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo"><svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="10 220 980 550">
   <defs>
     <style>
       .cls-1 {
@@ -256,11 +308,72 @@ tbody tr:hover td{background:var(--bg-card-hover);color:var(--text-hi);}
     </g>
     <path class="cls-1" d="M693.5,578.67v29.91c0,10.95-4.01,14.96-14.96,14.96-98.48,0-134.61-36.13-134.61-134.61v-119.69c0-10.91,4.01-14.92,14.92-14.92h29.85c10.91,0,14.92,4.01,14.92,14.92v119.56c0,54.81,20.1,74.91,74.91,74.91,10.95,0,14.96,4.02,14.96,14.96Z"/>
   </g>
-</svg>
+</svg></div>
+    <h1>Painel de Pessoas</h1>
+    <p>Entre com seu e-mail corporativo para acessar os indicadores da sua diretoria.</p>
+    <form id="loginForm">
+      <div class="login-field">
+        <label>E-mail</label>
+        <input type="text" id="loginEmail" autocomplete="username">
       </div>
+      <div class="login-field">
+        <label>Senha</label>
+        <input type="password" id="loginPassword" autocomplete="current-password">
+      </div>
+      <button type="submit" class="login-btn">Entrar</button>
+      <div class="login-error" id="loginError"></div>
+    </form>
+  </div>
+</div>
+
+<div class="app" id="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark"><svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="10 220 980 550">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+      }
+    </style>
+  </defs>
+  <g>
+    <path class="cls-1" d="M184.76,687.9h8.29v8.8h-8.29v-8.8ZM184.84,703.71h8.12v44.02h-8.12v-44.02Z"/>
+    <path class="cls-1" d="M246.98,719.09v28.63h-8.21v-27.61c0-6.33-3.16-11.2-10.17-11.2-7.78,0-11.88,7.44-11.88,14.7v24.1h-8.21v-44.02h7.01l.51,6.32c3.16-4.96,8.55-7.61,14.7-7.61,10.26,0,16.24,7.18,16.24,16.67Z"/>
+    <path class="cls-1" d="M303.47,719.09h-7.95c-1.71-6.15-6.75-10.09-13.33-10.09-9.57,0-14.79,7.78-14.79,16.75s5.3,16.67,14.79,16.67c6.67,0,11.62-3.85,13.33-10h7.95c-2.56,10.68-10.86,16.58-21.37,16.58-12.74,0-22.39-10.09-22.39-23.25s9.57-23.33,22.39-23.33c10.51,0,18.8,5.9,21.37,16.67Z"/>
+    <path class="cls-1" d="M360.48,725.68c0,13.08-9.74,23.33-23.16,23.33s-23.16-10.09-23.16-23.33,9.83-23.25,23.16-23.25,23.16,10,23.16,23.25ZM322.02,725.68c0,8.8,5.98,16.67,15.3,16.67s15.3-8.03,15.3-16.67-6.07-16.75-15.3-16.75-15.3,7.95-15.3,16.75Z"/>
+    <path class="cls-1" d="M397.91,702.6v7.52s-1.2-.26-2.65-.26c-7.61,0-12.91,6.84-12.91,17.09v20.77h-8.21v-44.02h7.01l.85,9.32c1.79-5.9,6.67-10.6,13.16-10.6,1.62,0,2.74.17,2.74.17Z"/>
+    <path class="cls-1" d="M456.88,725.68c0,12.91-7.86,23.33-21.54,23.33-7.27,0-12.99-3.5-16.24-8.55v24.87h-7.95v-61.63h7.01l.51,7.18c3.33-5.3,9.32-8.46,16.67-8.46,13.76,0,21.54,10.51,21.54,23.25ZM419.1,725.76c0,8.72,5.64,16.67,15.3,16.67s14.79-7.69,14.79-16.67-4.96-16.75-14.79-16.75-15.3,7.86-15.3,16.75Z"/>
+    <path class="cls-1" d="M515,725.68c0,13.08-9.74,23.33-23.16,23.33s-23.16-10.09-23.16-23.33,9.83-23.25,23.16-23.25,23.16,10,23.16,23.25ZM476.54,725.68c0,8.8,5.98,16.67,15.3,16.67s15.3-8.03,15.3-16.67-6.07-16.75-15.3-16.75-15.3,7.95-15.3,16.75Z"/>
+    <path class="cls-1" d="M552.43,702.6v7.52s-1.2-.26-2.65-.26c-7.61,0-12.91,6.84-12.91,17.09v20.77h-8.21v-44.02h7.01l.85,9.32c1.79-5.9,6.67-10.6,13.16-10.6,1.62,0,2.74.17,2.74.17Z"/>
+    <path class="cls-1" d="M591.66,721.23c2.14-.34,3.68-1.37,3.68-3.33,0-5.64-3.59-9.06-11.03-9.06-6.32,0-11.54,2.82-12.14,8.89h-7.69c1.62-10.68,9.4-15.3,19.74-15.3,11.45,0,18.8,4.96,18.8,17.27v17.86c0,3.33.17,5.81,3.5,5.81h.77v5.64h-3.42c-4.96,0-7.26-3.42-7.69-8.29-4.02,5.3-10.94,8.29-17.18,8.29-9.23,0-15.98-3.93-15.98-12.39s6.67-12.31,14.53-13.33c0,0,10.86-1.54,14.1-2.05ZM570.81,736.1c0,4.96,3.42,6.75,8.97,6.75,6.92,0,15.47-4.87,15.56-11.97v-5.3c-.17.09-.94.68-3.42,1.2-2.99.51-11.54,1.97-11.54,1.97-4.87.85-9.57,2.39-9.57,7.35Z"/>
+    <path class="cls-1" d="M655,710.89v-22.99h7.95v59.83h-7.01l-.51-7.18c-3.33,5.21-9.32,8.46-16.67,8.46-13.76,0-21.54-10.51-21.54-23.33s7.86-23.25,21.54-23.25c7.26,0,12.99,3.42,16.24,8.46ZM624.91,725.68c0,8.89,4.96,16.67,14.79,16.67s15.3-7.86,15.3-16.67-5.64-16.75-15.3-16.75-14.79,7.78-14.79,16.75Z"/>
+    <path class="cls-1" d="M722.94,725.68c0,13.08-9.74,23.33-23.16,23.33s-23.16-10.09-23.16-23.33,9.83-23.25,23.16-23.25,23.16,10,23.16,23.25ZM684.48,725.68c0,8.8,5.98,16.67,15.3,16.67s15.3-8.03,15.3-16.67-6.07-16.75-15.3-16.75-15.3,7.95-15.3,16.75Z"/>
+    <path class="cls-1" d="M760.37,702.6v7.52s-1.2-.26-2.65-.26c-7.61,0-12.91,6.84-12.91,17.09v20.77h-8.21v-44.02h7.01l.85,9.32c1.79-5.9,6.67-10.6,13.16-10.6,1.62,0,2.74.17,2.74.17Z"/>
+    <path class="cls-1" d="M799.6,721.23c2.14-.34,3.68-1.37,3.68-3.33,0-5.64-3.59-9.06-11.03-9.06-6.32,0-11.54,2.82-12.14,8.89h-7.69c1.62-10.68,9.4-15.3,19.74-15.3,11.45,0,18.8,4.96,18.8,17.27v17.86c0,3.33.17,5.81,3.5,5.81h.77v5.64h-3.42c-4.96,0-7.26-3.42-7.69-8.29-4.02,5.3-10.94,8.29-17.18,8.29-9.23,0-15.98-3.93-15.98-12.39s6.67-12.31,14.53-13.33c0,0,10.86-1.54,14.1-2.05ZM778.75,736.1c0,4.96,3.42,6.75,8.97,6.75,6.92,0,15.47-4.87,15.56-11.97v-5.3c-.17.09-.94.68-3.42,1.2-2.99.51-11.54,1.97-11.54,1.97-4.87.85-9.57,2.39-9.57,7.35Z"/>
+  </g>
+  <g>
+    <g>
+      <path class="cls-1" d="M573.73,317.15c-30.17,0-41.24-11.07-41.24-41.24s11.07-41.24,41.24-41.24c30.17,0,41.24,11.07,41.24,41.24,0,30.17-11.07,41.24-41.24,41.24Z"/>
+      <path class="cls-1" d="M161.54,354.32c-30.73,0-55.4,3.52-74.78,11.35v-116.05c0-10.94-4.02-14.96-14.96-14.96h-29.91c-10.95,0-14.96,4.02-14.96,14.96v237.36c0,.65,0,1.3,0,1.95,0,98.49,36.13,134.61,134.62,134.61s134.61-36.12,134.61-134.61-36.13-134.61-134.61-134.61ZM161.54,563.71c-54.72,0-74.78-20.07-74.78-74.78s20.07-74.78,74.78-74.78,74.78,20.07,74.78,74.78-20.07,74.78-74.78,74.78Z"/>
+      <path class="cls-1" d="M838.47,354.32c-98.49,0-134.61,36.12-134.61,134.61s36.12,134.61,134.61,134.61,134.61-36.12,134.61-134.61-36.12-134.61-134.61-134.61ZM838.47,563.61c-54.63,0-74.67-20.04-74.67-74.67s20.04-74.67,74.67-74.67,74.67,20.04,74.67,74.67-20.04,74.67-74.67,74.67Z"/>
+      <path class="cls-1" d="M509.78,369.28v29.91c0,10.95-4.02,14.96-14.96,14.96h-45.01c-43.08,0-59.31,15.56-59.82,57.79v138.75c-.5,9.37-4.68,12.85-14.9,12.85h-29.91c-10.16,0-14.35-3.45-14.89-12.72v-153.59c.44-75.25,28.69-102.91,104.69-102.91h59.84c10.94,0,14.96,4.02,14.96,14.96Z"/>
+    </g>
+    <path class="cls-1" d="M693.5,578.67v29.91c0,10.95-4.01,14.96-14.96,14.96-98.48,0-134.61-36.13-134.61-134.61v-119.69c0-10.91,4.01-14.92,14.92-14.92h29.85c10.91,0,14.92,4.01,14.92,14.92v119.56c0,54.81,20.1,74.91,74.91,74.91,10.95,0,14.96,4.02,14.96,14.96Z"/>
+  </g>
+</svg></div>
       <div class="brand-text">Painel de Pessoas
         <span>People Analytics · Brio</span>
       </div>
+    </div>
+
+    <div class="user-badge">
+      <div class="user-badge-info">
+        <div class="user-badge-name" id="userName">—</div>
+        <div class="user-badge-role" id="userRole">—</div>
+      </div>
+      <button class="logout-btn" id="logoutBtn" title="Sair">⏻</button>
     </div>
 
     <label class="upload-box" id="uploadBox">
@@ -278,18 +391,24 @@ tbody tr:hover td{background:var(--bg-card-hover);color:var(--text-hi);}
       <select id="fDiretoria"><option value="">Todas</option></select>
     </div>
     <div class="filter-group">
-      <span class="filter-label">Diretor(a)</span>
-      <select id="fDiretor"><option value="">Todos</option></select>
-    </div>
-    <div class="filter-group">
-      <span class="filter-label">Grande Área</span>
+      <span class="filter-label">Área</span>
       <select id="fArea"><option value="">Todas</option></select>
     </div>
     <div class="filter-group">
       <span class="filter-label">CC Unificado</span>
       <select id="fCC"><option value="">Todos</option></select>
     </div>
+    <div class="filter-group">
+      <span class="filter-label">Nome CR</span>
+      <select id="fNomeCR"><option value="">Todos</option></select>
+    </div>
     <button class="reset-btn" id="resetBtn">Limpar filtros</button>
+
+    <div class="admin-box" id="adminBox" style="display:none;">
+      <span class="admin-box-label">Ferramentas de admin</span>
+      <button class="export-btn" id="exportBtn">Exportar planilha por diretoria</button>
+      <div class="admin-hint">Gera um arquivo .xlsx só com os dados de cada diretoria — envie apenas o arquivo do respectivo gestor para cada um, em vez da planilha completa.</div>
+    </div>
   </aside>
 
   <main>
@@ -318,15 +437,15 @@ tbody tr:hover td{background:var(--bg-card-hover);color:var(--text-hi);}
         <div class="row-3">
           <div class="panel">
             <div class="panel-head">
-              <div class="panel-title">Turnover geral por CC</div>
-              <div class="panel-sub">Clique num CC para filtrar o painel</div>
+              <div class="panel-title">Turnover geral por Nome CR</div>
+              <div class="panel-sub">Clique num item para filtrar o painel</div>
             </div>
             <div class="rank-list" id="rankList"></div>
           </div>
           <div class="panel">
             <div class="panel-head">
               <div class="panel-title">Admissões vs. Rescisões</div>
-              <div class="panel-sub">Clique numa barra para filtrar por diretoria</div>
+              <div class="panel-sub">Por área · clique numa barra para filtrar</div>
             </div>
             <div class="chart-box"><canvas id="movChart"></canvas></div>
           </div>
@@ -352,13 +471,13 @@ tbody tr:hover td{background:var(--bg-card-hover);color:var(--text-hi);}
           </div>
           <div class="panel">
             <div class="panel-head">
-              <div class="panel-title">Detalhe por Centro de Custo</div>
-              <div class="panel-sub" id="rowCountBh">Clique numa linha para filtrar por CC</div>
+              <div class="panel-title">Detalhe por Nome CR</div>
+              <div class="panel-sub" id="rowCountBh">Clique numa linha para filtrar</div>
             </div>
             <div class="table-wrap">
               <table>
                 <thead><tr>
-                  <th>Diretoria</th><th>Área</th><th>CC Unificado</th>
+                  <th>Diretoria</th><th>Área</th><th>CC Unificado</th><th>Nome CR</th>
                   <th>BH + (h)</th><th>Pessoas +</th><th>BH - (h)</th><th>Pessoas -</th>
                 </tr></thead>
                 <tbody id="tableBodyBh"></tbody>
@@ -401,23 +520,47 @@ break;case"<bookViews":;case"<bookViews>":;case"</bookViews>":break;case"<workbo
 
 </script>
 <script>
+window.addEventListener('error', function(evt){
+  const el = document.getElementById('loginError');
+  if(el) el.textContent = 'Erro técnico: ' + evt.message + ' (linha ' + evt.lineno + ')';
+  console.error('Erro capturado:', evt.message, evt.filename, evt.lineno, evt.error);
+});
+window.addEventListener('unhandledrejection', function(evt){
+  const el = document.getElementById('loginError');
+  if(el) el.textContent = 'Erro técnico (promise): ' + evt.reason;
+  console.error('Promise rejeitada:', evt.reason);
+});
+
 const COLS = {
-  diretoria: "Diretoria", diretor: "Diretor(a)", area: "Grande Área", cc: "CC Unificado",
+  diretoria: "Diretoria", area: "Áreas", nomeCR: "Nome CR", cc: "CC Unificado",
   ativos: "Ativos", admissoes: "Admissões",
   rescVol: "Rescisões Voluntárias", rescInvol: "Rescisões Involuntárias", rescTotal: "Rescisões (Total)",
   turnGeral: "Turnover Geral", turnVol: "Turnover Voluntário", turnInvol: "Turnover Involuntário",
   bhPos: "BH + (horas)", contPos: "Cont. Pessoas +", bhNeg: "BH - (horas)", contNeg: "Cont. Pessoas -",
-  tempoCasa: "Tempo Médio de Casa (meses)", cultura: "Estágio de Cultura"
+  tempoCasa: "Tempo Médio de Casa (Anos)", cultura: "Estágios de cultura"
 };
 
 const CULTURE_COLORS = {
-  "Espírito de Fundador": '#B23A46',
+  "Espírito de fundador": '#B23A46',
   "Influenciar e ser influenciado": '#D9A94E',
   "Pedagogia da presença": '#8C6A6A',
-  "Delegação Planejada": '#4BB584'
+  "Delegação planejada": '#4BB584'
 };
 const CULTURE_FALLBACK = '#6B7280';
 
+/* ===== USERS / ACCESS CONTROL ===== */
+/* NOTE: this is a client-side gate only — see chat notes about its limits. */
+const USERS = {
+  "priscila.shiogiri@brioincorporadora.com.br": {password:"#Shiogiri@@2026", diretoria:"Priscila Shiogiri", name:"Priscila Shiogiri", role:"gestor"},
+  "guilherme.said@brioincorporadora.com.br":    {password:"#Said@@2026",     diretoria:"Guilherme Said",    name:"Guilherme Said",    role:"gestor"},
+  "carlos.neto@brioincorporadora.com.br":       {password:"#Neto@@2026",     diretoria:"Carlos Consoni",    name:"Carlos Neto",       role:"gestor"},
+  "fernando.fortes@brioincorporadora.com.br":   {password:"#Fortes@@2026",   diretoria:"Fernando Fortes",   name:"Fernando Fortes",   role:"gestor"},
+  "lucas.damando@briovendas.com.br":            {password:"#Damando@@2026",  diretoria:"Lucas Damando",     name:"Lucas Damando",     role:"gestor"},
+  "people.analytics@brioincorporadora.com.br":  {password:"##2026.people",   diretoria:null,                name:"People Analytics",  role:"admin"}
+};
+
+let currentUser = null;
+let ALL_RAW = [];
 let RAW = [];
 let charts = {};
 let activeTab = 'tab1';
@@ -430,6 +573,41 @@ if(typeof Chart !== 'undefined'){
 const fmtPct = v => (v*100).toFixed(1).replace('.', ',') + '%';
 const fmtInt = v => Math.round(v).toLocaleString('pt-BR');
 const fmtNum1 = v => (Math.round(v*10)/10).toLocaleString('pt-BR');
+
+/* ===== LOGIN ===== */
+document.getElementById('loginForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const pass = document.getElementById('loginPassword').value.trim();
+  const user = USERS[email];
+  const errEl = document.getElementById('loginError');
+  if(!user || user.password !== pass){
+    errEl.textContent = 'E-mail ou senha incorretos.';
+    return;
+  }
+  errEl.textContent = '';
+  currentUser = {email, ...user};
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').classList.add('active');
+  document.getElementById('userName').textContent = currentUser.name;
+  document.getElementById('userRole').textContent = currentUser.role === 'admin' ? 'Administrador' : 'Gestor(a) · ' + currentUser.diretoria;
+  if(currentUser.role === 'admin'){
+    document.getElementById('adminBox').style.display = 'block';
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', ()=>{
+  currentUser = null;
+  ALL_RAW = []; RAW = [];
+  document.getElementById('app').classList.remove('active');
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPassword').value = '';
+  document.getElementById('emptyState').style.display = 'flex';
+  document.getElementById('dashboard').classList.remove('active');
+  document.getElementById('fileStatus').textContent = '';
+  document.getElementById('adminBox').style.display = 'none';
+});
 
 document.getElementById('fileInput').addEventListener('change', handleFile);
 
@@ -467,10 +645,20 @@ function handleFile(e){
         if(r[COLS.diretoria]) lastDir = r[COLS.diretoria];
         else r[COLS.diretoria] = lastDir;
         return r;
-      }).filter(r => r[COLS.cc]);
+      }).filter(r => r[COLS.cc] || r[COLS.nomeCR]);
 
-      RAW = rows;
-      setStatus('✓ ' + file.name + ' · ' + rows.length + ' linhas', false);
+      ALL_RAW = rows;
+
+      if(currentUser.role === 'gestor'){
+        RAW = rows.filter(r => r[COLS.diretoria] === currentUser.diretoria);
+        if(!RAW.length){
+          setStatus('Nenhuma linha encontrada para "' + currentUser.diretoria + '" nessa planilha.', true);
+        }
+      } else {
+        RAW = rows;
+      }
+
+      setStatus('✓ ' + file.name + ' · ' + RAW.length + ' linha(s) carregada(s)', false);
       document.getElementById('emptyState').style.display = 'none';
       document.getElementById('dashboard').classList.add('active');
       populateFilters();
@@ -499,29 +687,38 @@ function fillSelect(id, values, current){
 }
 
 function populateFilters(){
-  fillSelect('fDiretoria', uniqueSorted(RAW.map(r=>r[COLS.diretoria])));
+  const dirSel = document.getElementById('fDiretoria');
+  if(currentUser.role === 'gestor'){
+    fillSelect('fDiretoria', [currentUser.diretoria], currentUser.diretoria);
+    dirSel.value = currentUser.diretoria;
+    dirSel.disabled = true;
+  } else {
+    dirSel.disabled = false;
+    fillSelect('fDiretoria', uniqueSorted(RAW.map(r=>r[COLS.diretoria])));
+  }
   updateDependentFilters();
 }
 
 function updateDependentFilters(){
   const dir = document.getElementById('fDiretoria').value;
   const scoped1 = RAW.filter(r => !dir || r[COLS.diretoria]===dir);
-  fillSelect('fDiretor', uniqueSorted(scoped1.map(r=>r[COLS.diretor])), document.getElementById('fDiretor').value);
-
-  const diretor = document.getElementById('fDiretor').value;
-  const scoped2 = scoped1.filter(r => !diretor || r[COLS.diretor]===diretor);
-  fillSelect('fArea', uniqueSorted(scoped2.map(r=>r[COLS.area])), document.getElementById('fArea').value);
+  fillSelect('fArea', uniqueSorted(scoped1.map(r=>r[COLS.area])), document.getElementById('fArea').value);
 
   const area = document.getElementById('fArea').value;
-  const scoped3 = scoped2.filter(r => !area || r[COLS.area]===area);
-  fillSelect('fCC', uniqueSorted(scoped3.map(r=>r[COLS.cc])), document.getElementById('fCC').value);
+  const scoped2 = scoped1.filter(r => !area || r[COLS.area]===area);
+  fillSelect('fCC', uniqueSorted(scoped2.map(r=>r[COLS.cc])), document.getElementById('fCC').value);
+
+  const cc = document.getElementById('fCC').value;
+  const scoped3 = scoped2.filter(r => !cc || r[COLS.cc]===cc);
+  fillSelect('fNomeCR', uniqueSorted(scoped3.map(r=>r[COLS.nomeCR])), document.getElementById('fNomeCR').value);
 }
 
-['fDiretoria','fDiretor','fArea','fCC'].forEach(id=>{
+['fDiretoria','fArea','fCC','fNomeCR'].forEach(id=>{
   document.getElementById(id).addEventListener('change', ()=>{ updateDependentFilters(); render(); });
 });
 document.getElementById('resetBtn').addEventListener('click', ()=>{
-  ['fDiretoria','fDiretor','fArea','fCC'].forEach(id=>document.getElementById(id).value='');
+  ['fArea','fCC','fNomeCR'].forEach(id=>document.getElementById(id).value='');
+  if(currentUser.role === 'admin') document.getElementById('fDiretoria').value='';
   updateDependentFilters(); render();
 });
 
@@ -529,31 +726,33 @@ let cultureFilter = null;
 
 function getFiltered(){
   const dir = document.getElementById('fDiretoria').value;
-  const diretor = document.getElementById('fDiretor').value;
   const area = document.getElementById('fArea').value;
   const cc = document.getElementById('fCC').value;
+  const nomeCR = document.getElementById('fNomeCR').value;
   return RAW.filter(r =>
     (!dir || r[COLS.diretoria]===dir) &&
-    (!diretor || r[COLS.diretor]===diretor) &&
     (!area || r[COLS.area]===area) &&
     (!cc || r[COLS.cc]===cc) &&
+    (!nomeCR || r[COLS.nomeCR]===nomeCR) &&
     (!cultureFilter || r[COLS.cultura]===cultureFilter)
   );
 }
 
-function applyDiretoriaFilter(label){
-  const sel = document.getElementById('fDiretoria');
+function applyAreaFilter(label){
+  const sel = document.getElementById('fArea');
   sel.value = (sel.value === label) ? '' : label;
   updateDependentFilters();
   render();
 }
 
-function applyCcFilter(cc){
-  const curr = document.getElementById('fCC').value;
-  ['fDiretoria','fDiretor','fArea','fCC'].forEach(id=>document.getElementById(id).value='');
-  populateFilters();
-  if(curr !== cc){
-    document.getElementById('fCC').value = cc;
+function applyNomeCRFilter(nomeCR){
+  const curr = document.getElementById('fNomeCR').value;
+  document.getElementById('fArea').value='';
+  document.getElementById('fCC').value='';
+  document.getElementById('fNomeCR').value='';
+  updateDependentFilters();
+  if(curr !== nomeCR){
+    document.getElementById('fNomeCR').value = nomeCR;
   }
   render();
 }
@@ -567,19 +766,19 @@ function renderActiveChips(){
   const box = document.getElementById('activeFilters');
   const chips = [];
   const dir = document.getElementById('fDiretoria').value;
-  const diretor = document.getElementById('fDiretor').value;
   const area = document.getElementById('fArea').value;
   const cc = document.getElementById('fCC').value;
-  if(dir) chips.push({label:'Diretoria: '+dir, clear:()=>{document.getElementById('fDiretoria').value='';updateDependentFilters();render();}});
-  if(diretor) chips.push({label:'Diretor(a): '+diretor, clear:()=>{document.getElementById('fDiretor').value='';updateDependentFilters();render();}});
+  const nomeCR = document.getElementById('fNomeCR').value;
+  if(dir && currentUser.role === 'admin') chips.push({label:'Diretoria: '+dir, clear:()=>{document.getElementById('fDiretoria').value='';updateDependentFilters();render();}});
   if(area) chips.push({label:'Área: '+area, clear:()=>{document.getElementById('fArea').value='';updateDependentFilters();render();}});
   if(cc) chips.push({label:'CC: '+cc, clear:()=>{document.getElementById('fCC').value='';updateDependentFilters();render();}});
+  if(nomeCR) chips.push({label:'Nome CR: '+nomeCR, clear:()=>{document.getElementById('fNomeCR').value='';updateDependentFilters();render();}});
   if(cultureFilter) chips.push({label:'Cultura: '+cultureFilter, clear:()=>{cultureFilter=null;render();}});
 
   if(!chips.length){ box.innerHTML = '<span class="hint-text">Clique em qualquer gráfico, barra ou linha para filtrar o painel inteiro — como no Power BI.</span>'; return; }
 
   box.innerHTML = '';
-  chips.forEach((c,i)=>{
+  chips.forEach((c)=>{
     const el = document.createElement('div');
     el.className = 'chip';
     el.innerHTML = `<span>${c.label}</span><button aria-label="remover">✕</button>`;
@@ -590,7 +789,8 @@ function renderActiveChips(){
   clearAll.className = 'clear-all-chip';
   clearAll.textContent = 'Limpar tudo';
   clearAll.addEventListener('click', ()=>{
-    ['fDiretoria','fDiretor','fArea','fCC'].forEach(id=>document.getElementById(id).value='');
+    ['fArea','fCC','fNomeCR'].forEach(id=>document.getElementById(id).value='');
+    if(currentUser.role === 'admin') document.getElementById('fDiretoria').value='';
     cultureFilter = null;
     updateDependentFilters(); render();
   });
@@ -636,7 +836,7 @@ function renderTab1(rows){
     {label:'Rescisões', value: fmtInt(rescTotal), tag:['tag-neutral', rescVol+' vol / '+rescInvol+' invol']},
     {label:'Turnover Geral', value: fmtPct(turnGeral), tag: severityTag(turnGeral)},
     {label:'Turnover Voluntário', value: fmtPct(turnVol), tag: severityTag(turnVol)},
-    {label:'Tempo médio de casa', value: fmtNum1(tempoCasaAvg/12)+' anos', tag:['tag-neutral', Math.round(tempoCasaAvg)+' meses']},
+    {label:'Tempo médio de casa', value: fmtNum1(tempoCasaAvg)+' anos', tag:null},
   ];
   document.getElementById('kpiGrid1').innerHTML = kpis.map(k => `
     <div class="kpi-card">
@@ -647,19 +847,19 @@ function renderTab1(rows){
   `).join('');
 
   const ranked = [...rows].map(r => ({
-    name: r[COLS.cc], val: Number(r[COLS.turnGeral])||0
+    name: r[COLS.nomeCR], val: Number(r[COLS.turnGeral])||0
   })).sort((a,b)=> b.val - a.val);
   const maxVal = Math.max(0.01, ...ranked.map(r=>r.val));
-  const activeCc = document.getElementById('fCC').value;
+  const activeNomeCR = document.getElementById('fNomeCR').value;
   document.getElementById('rankList').innerHTML = ranked.map(r => `
-    <div class="rank-row${activeCc && activeCc!==r.name ? ' dimmed':''}" data-cc="${r.name.replace(/"/g,'&quot;')}">
-      <div class="rank-name">${r.name}</div>
+    <div class="rank-row${activeNomeCR && activeNomeCR!==r.name ? ' dimmed':''}" data-nomecr="${(r.name||'').replace(/"/g,'&quot;')}">
+      <div class="rank-name">${r.name||'—'}</div>
       <div class="rank-bar-track"><div class="rank-bar-fill" style="width:${(r.val/maxVal*100).toFixed(1)}%;background:${severityColor(r.val)}"></div></div>
       <div class="rank-val">${fmtPct(r.val)}</div>
     </div>
   `).join('') || '<div style="color:var(--text-dim);font-size:11.5px;padding:8px 0;">Sem dados no filtro atual.</div>';
   document.querySelectorAll('#rankList .rank-row').forEach(el=>{
-    el.addEventListener('click', ()=> applyCcFilter(el.dataset.cc));
+    el.addEventListener('click', ()=> applyNomeCRFilter(el.dataset.nomecr));
   });
 
   renderMovChart(rows);
@@ -687,25 +887,24 @@ function renderTab2(rows){
     </div>
   `).join('');
 
-  document.getElementById('rowCountBh').textContent = rows.length + ' CC(s) no filtro · clique numa linha para filtrar';
+  document.getElementById('rowCountBh').textContent = rows.length + ' linha(s) no filtro · clique para filtrar';
   const sorted = [...rows].sort((a,b)=> (Number(b[COLS.bhNeg])||0) - (Number(a[COLS.bhNeg])||0));
-  document.getElementById('tableBodyBh').innerHTML = sorted.map(r => `<tr data-cc="${(r[COLS.cc]||'').replace(/"/g,'&quot;')}">
+  document.getElementById('tableBodyBh').innerHTML = sorted.map(r => `<tr data-nomecr="${(r[COLS.nomeCR]||'').replace(/"/g,'&quot;')}">
       <td>${r[COLS.diretoria]||''}</td>
       <td>${r[COLS.area]||''}</td>
       <td>${r[COLS.cc]||''}</td>
+      <td>${r[COLS.nomeCR]||''}</td>
       <td>${fmtInt(r[COLS.bhPos]||0)}</td>
       <td>${fmtInt(r[COLS.contPos]||0)}</td>
       <td>${fmtInt(r[COLS.bhNeg]||0)}</td>
       <td>${fmtInt(r[COLS.contNeg]||0)}</td>
     </tr>`).join('');
   document.querySelectorAll('#tableBodyBh tr').forEach(el=>{
-    el.addEventListener('click', ()=> applyCcFilter(el.dataset.cc));
+    el.addEventListener('click', ()=> applyNomeCRFilter(el.dataset.nomecr));
   });
 
   renderBhChart(bhPos, bhNeg);
 }
-
-function destroyChart(key){ if(charts[key]){ charts[key].destroy(); delete charts[key]; } }
 
 function renderCultureChart(rows){
   const counts = {};
@@ -734,16 +933,16 @@ function renderCultureChart(rows){
 }
 
 function renderMovChart(rows){
-  const byDir = {};
+  const byArea = {};
   rows.forEach(r => {
-    const d = r[COLS.diretoria] || '—';
-    if(!byDir[d]) byDir[d] = {adm:0, resc:0};
-    byDir[d].adm += Number(r[COLS.admissoes])||0;
-    byDir[d].resc += Number(r[COLS.rescTotal])||0;
+    const a = r[COLS.area] || '—';
+    if(!byArea[a]) byArea[a] = {adm:0, resc:0};
+    byArea[a].adm += Number(r[COLS.admissoes])||0;
+    byArea[a].resc += Number(r[COLS.rescTotal])||0;
   });
-  const labels = Object.keys(byDir);
-  const admData = labels.map(l=>byDir[l].adm);
-  const rescData = labels.map(l=>byDir[l].resc);
+  const labels = Object.keys(byArea);
+  const admData = labels.map(l=>byArea[l].adm);
+  const rescData = labels.map(l=>byArea[l].resc);
   if(charts.mov){
     charts.mov.data.labels = labels;
     charts.mov.data.datasets[0].data = admData;
@@ -762,7 +961,7 @@ function renderMovChart(rows){
     },
     options:{
       maintainAspectRatio:false,
-      onClick:(evt, els)=>{ if(els.length){ applyDiretoriaFilter(charts.mov.data.labels[els[0].index]); } },
+      onClick:(evt, els)=>{ if(els.length){ applyAreaFilter(charts.mov.data.labels[els[0].index]); } },
       onHover:(evt, els)=>{ if(evt.native){ evt.native.target.style.cursor = els.length ? 'pointer' : 'default'; } },
       scales:{
         x:{ ticks:{ color:'#CBA9AA', font:{size:9}, maxRotation:35, minRotation:0 }, grid:{ display:false } },
@@ -800,6 +999,23 @@ function renderBhChart(bhPos, bhNeg){
     }
   });
 }
+
+/* ===== ADMIN: EXPORT PER-DIRETORIA FILES ===== */
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  if(!ALL_RAW.length){
+    alert('Envie a planilha mensal primeiro.');
+    return;
+  }
+  const diretorias = uniqueSorted(ALL_RAW.map(r=>r[COLS.diretoria]));
+  diretorias.forEach(dir=>{
+    const subset = ALL_RAW.filter(r => r[COLS.diretoria] === dir);
+    const ws = XLSX.utils.json_to_sheet(subset);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Indicadores');
+    const safeName = dir.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'_');
+    XLSX.writeFile(wb, 'Indicadores_' + safeName + '.xlsx');
+  });
+});
 </script>
 </body>
 </html>
