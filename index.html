@@ -409,6 +409,12 @@ tbody tr:hover td{background:var(--bg-card-hover);color:var(--text-hi);}
       <button class="export-btn" id="exportBtn">Exportar planilha por diretoria</button>
       <div class="admin-hint">Gera um arquivo .xlsx só com os dados de cada diretoria — envie apenas o arquivo do respectivo gestor para cada um, em vez da planilha completa.</div>
     </div>
+
+    <div class="admin-box" id="gestorExportBox" style="display:none;">
+      <span class="admin-box-label">Relatório</span>
+      <button class="export-btn" id="exportGestorBtn">Exportar relatório da diretoria</button>
+      <div class="admin-hint">Gera um .xlsx com todos os dados da sua diretoria neste mês.</div>
+    </div>
   </aside>
 
   <main>
@@ -593,6 +599,8 @@ document.getElementById('loginForm').addEventListener('submit', function(e){
   document.getElementById('userRole').textContent = currentUser.role === 'admin' ? 'Administrador' : 'Gestor(a) · ' + currentUser.diretoria;
   if(currentUser.role === 'admin'){
     document.getElementById('adminBox').style.display = 'block';
+  } else {
+    document.getElementById('gestorExportBox').style.display = 'block';
   }
 });
 
@@ -607,6 +615,7 @@ document.getElementById('logoutBtn').addEventListener('click', ()=>{
   document.getElementById('dashboard').classList.remove('active');
   document.getElementById('fileStatus').textContent = '';
   document.getElementById('adminBox').style.display = 'none';
+  document.getElementById('gestorExportBox').style.display = 'none';
 });
 
 document.getElementById('fileInput').addEventListener('change', handleFile);
@@ -826,7 +835,7 @@ function renderTab1(rows){
   const rescVol = sum(rows, COLS.rescVol);
   const rescInvol = sum(rows, COLS.rescInvol);
   const rescTotal = rescVol + rescInvol;
-  const turnGeral = ativos ? rescTotal/ativos : 0;
+  const turnGeral = ativos ? (admissoes + rescTotal) / 2 / ativos : 0;
   const turnVol = ativos ? rescVol/ativos : 0;
   const tempoCasaAvg = rows.length ? sum(rows, COLS.tempoCasa)/rows.length : 0;
 
@@ -1015,6 +1024,19 @@ document.getElementById('exportBtn').addEventListener('click', ()=>{
     const safeName = dir.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'_');
     XLSX.writeFile(wb, 'Indicadores_' + safeName + '.xlsx');
   });
+});
+
+/* ===== GESTOR: EXPORT OWN DIRETORIA REPORT ===== */
+document.getElementById('exportGestorBtn').addEventListener('click', ()=>{
+  if(!RAW.length){
+    alert('Envie a planilha mensal primeiro.');
+    return;
+  }
+  const ws = XLSX.utils.json_to_sheet(RAW);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Indicadores');
+  const safeName = (currentUser.diretoria || 'diretoria').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'_');
+  XLSX.writeFile(wb, 'Relatorio_' + safeName + '.xlsx');
 });
 </script>
 </body>
