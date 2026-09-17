@@ -335,6 +335,18 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   </div>
 </div>
 
+<dialog id="passwordDialog" aria-labelledby="passwordTitle" style="background:var(--panel);color:var(--text);border:1px solid var(--gold);border-radius:16px;padding:28px;width:min(420px,90vw)">
+  <form id="passwordForm">
+    <h2 id="passwordTitle">Trocar senha</h2>
+    <p style="color:var(--muted);font-size:13px">Nesta demonstração, a nova senha vale somente neste navegador. Limpar os dados do navegador restaura a senha inicial.</p>
+    <div class="field"><label for="oldPassword">SENHA ATUAL</label><input id="oldPassword" type="password" autocomplete="current-password" required></div>
+    <div class="field"><label for="newPassword">NOVA SENHA</label><input id="newPassword" type="password" autocomplete="new-password" minlength="12" required><small>Use pelo menos 12 caracteres.</small></div>
+    <div class="field"><label for="confirmPassword">CONFIRMAR NOVA SENHA</label><input id="confirmPassword" type="password" autocomplete="new-password" minlength="12" required></div>
+    <p id="passwordError" role="alert" style="color:var(--red-2)"></p>
+    <button type="submit" id="savePasswordBtn" class="login-btn">Salvar nova senha</button>
+    <button type="button" id="cancelPasswordBtn" class="logout-btn" style="margin-top:12px">Cancelar</button>
+  </form>
+</dialog>
 <!-- ============ APP ============ -->
 <div id="app">
 <div class="shell">
@@ -355,6 +367,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       <button class="logout-btn" id="logoutBtn" title="Sair">&#9211;</button>
     </div>
 
+    <button type="button" class="logout-btn" id="changePasswordBtn" style="width:100%;margin-bottom:12px">Trocar senha</button>
+    <p id="passwordStatus" role="status" style="font-size:12px;color:var(--green)"></p>
     <div class="upload-box" id="uploadBox">
       <div class="ub-title">&#8593;&nbsp; Enviar planilha mensal</div>
       <label class="upload-label">.xlsx — aba "Indicadores"
@@ -564,6 +578,7 @@ const RAW_PERIODOS = [{"periodo":"Média sociedade 1 sem 24","dims":{"Confiança
 const RAW_SOCIOS = [{"nome":"Arthur Henrique Lara","dirLeader":"Carlos Consoni","dims":{"Confiança":4.423076923076923,"Escopo adequado":4.6923076923076925,"Apoio":4.538461538461538,"Relacionamento":4.576923076923077,"Resultados":4.6923076923076925,"Formação pessoas":4.076923076923077,"Comunicação":4.538461538461538},"media1sem26":4.5054945054945055,"media2sem25":4.2010582010582,"media1sem25":null,"media2sem24":null,"media1sem24":null,"tendencia":"Piorou"},{"nome":"Guilherme Teixeira de Almeida","dirLeader":"Carlos Consoni","dims":{"Confiança":4.653846153846154,"Escopo adequado":4.653846153846154,"Apoio":4.461538461538462,"Relacionamento":4.461538461538462,"Resultados":4.269230769230769,"Formação pessoas":4.153846153846154,"Comunicação":4.384615384615385},"media1sem26":4.434065934065934,"media2sem25":4.23979591836735,"media1sem25":4.21674876847291,"media2sem24":4.17733990147783,"media1sem24":4.16402116402116,"tendencia":"Melhorou"},{"nome":"Heitor Correia","dirLeader":"Carlos Consoni","dims":{"Confiança":4.8076923076923075,"Escopo adequado":4.8076923076923075,"Apoio":4.6923076923076925,"Relacionamento":4.769230769230769,"Resultados":4.769230769230769,"Formação pessoas":4.538461538461538,"Comunicação":4.846153846153846},"media1sem26":4.747252747252747,"media2sem25":4.6734693877551,"media1sem25":4.63546798029557,"media2sem24":4.52857142857143,"media1sem24":4.41269841269841,"tendencia":"Melhorou"},{"nome":"Lais Lomba Lara","dirLeader":"Carlos Consoni","dims":{"Confiança":4.6923076923076925,"Escopo adequado":4.653846153846154,"Apoio":4.653846153846154,"Relacionamento":4.6923076923076925,"Resultados":4.576923076923077,"Formação pessoas":3.8461538461538463,"Comunicação":4.653846153846154},"media1sem26":4.538461538461538,"media2sem25":null,"media1sem25":null,"media2sem24":null,"media1sem24":null,"tendencia":"Melhorou"},{"nome":"Luiz Henrique Aleixo Cotrin","dirLeader":"Carlos Consoni","dims":{"Confiança":4.961538461538462,"Escopo adequado":4.8076923076923075,"Apoio":4.846153846153846,"Relacionamento":4.884615384615385,"Resultados":4.538461538461538,"Formação pessoas":4.384615384615385,"Comunicação":4.6923076923076925},"media1sem26":4.730769230769232,"media2sem25":4.70918367346939,"media1sem25":4.63054187192118,"media2sem24":4.37619047619048,"media1sem24":4.56084656084656,"tendencia":"Melhorou"},{"nome":"Matheus Almeida Miranda Silva","dirLeader":"Carlos Consoni","dims":{"Confiança":4.730769230769231,"Escopo adequado":4.6923076923076925,"Apoio":4.538461538461538,"Relacionamento":4.576923076923077,"Resultados":4.6923076923076925,"Formação pessoas":4.769230769230769,"Comunicação":4.615384615384615},"media1sem26":4.65934065934066,"media2sem25":4.56632653061225,"media1sem25":4.59113300492611,"media2sem24":4.2952380952381,"media1sem24":4.35449735449735,"tendencia":"Melhorou"},{"nome":"Silvio José Basso Junior","dirLeader":"Carlos Consoni","dims":{"Confiança":4.8076923076923075,"Escopo adequado":4.8076923076923075,"Apoio":4.730769230769231,"Relacionamento":4.6923076923076925,"Resultados":4.538461538461538,"Formação pessoas":4.115384615384615,"Comunicação":4.653846153846154},"media1sem26":4.620879120879121,"media2sem25":4.52040816326531,"media1sem25":4.35960591133005,"media2sem24":3.92857142857143,"media1sem24":3.85185185185185,"tendencia":"Piorou"},{"nome":"Fábio Villas Boas","dirLeader":"CEO","dims":{"Confiança":5,"Escopo adequado":4.769230769230769,"Apoio":4.730769230769231,"Relacionamento":4.730769230769231,"Resultados":4.846153846153846,"Formação pessoas":4.730769230769231,"Comunicação":4.653846153846154},"media1sem26":4.78021978021978,"media2sem25":4.74489795918367,"media1sem25":4.78325123152709,"media2sem24":4.73809523809524,"media1sem24":4.66666666666667,"tendencia":"Melhorou"},{"nome":"Carlos Antenor Consoni Neto","dirLeader":"Fabio Villas Boas","dims":{"Confiança":4.961538461538462,"Escopo adequado":4.538461538461538,"Apoio":4.846153846153846,"Relacionamento":4.846153846153846,"Resultados":4.884615384615385,"Formação pessoas":5,"Comunicação":4.923076923076923},"media1sem26":4.857142857142857,"media2sem25":4.82142857142857,"media1sem25":4.83743842364532,"media2sem24":4.82857142857143,"media1sem24":4.75132275132275,"tendencia":"Melhorou"},{"nome":"Fernando Fortes Molina da Costa Teixeira","dirLeader":"Fabio Villas Boas","dims":{"Confiança":4.3076923076923075,"Escopo adequado":4.115384615384615,"Apoio":4.538461538461538,"Relacionamento":4.423076923076923,"Resultados":4.153846153846154,"Formação pessoas":3.6153846153846154,"Comunicação":4.153846153846154},"media1sem26":4.186813186813187,"media2sem25":4.03061224489796,"media1sem25":3.99014778325123,"media2sem24":4.17241379310345,"media1sem24":4.13227513227513,"tendencia":"Melhorou"},{"nome":"Guilherme Santoro Said","dirLeader":"Fabio Villas Boas","dims":{"Confiança":4.961538461538462,"Escopo adequado":4.8076923076923075,"Apoio":4.6923076923076925,"Relacionamento":4.884615384615385,"Resultados":4.846153846153846,"Formação pessoas":4.730769230769231,"Comunicação":4.730769230769231},"media1sem26":4.8076923076923075,"media2sem25":4.79081632653061,"media1sem25":4.79802955665025,"media2sem24":4.66666666666667,"media1sem24":4.67724867724868,"tendencia":"Piorou"},{"nome":"Lucas Panicio Damando","dirLeader":"Fabio Villas Boas","dims":{"Confiança":5,"Escopo adequado":4.153846153846154,"Apoio":4.6923076923076925,"Relacionamento":4.884615384615385,"Resultados":4.461538461538462,"Formação pessoas":4.461538461538462,"Comunicação":4.269230769230769},"media1sem26":4.56043956043956,"media2sem25":4.55612244897959,"media1sem25":4.59113300492611,"media2sem24":4.47619047619048,"media1sem24":4.57142857142857,"tendencia":"Melhorou"},{"nome":"Priscila Kaory Shiogiri","dirLeader":"Fabio Villas Boas","dims":{"Confiança":4.923076923076923,"Escopo adequado":4.884615384615385,"Apoio":4.846153846153846,"Relacionamento":4.769230769230769,"Resultados":4.730769230769231,"Formação pessoas":4.576923076923077,"Comunicação":4.8076923076923075},"media1sem26":4.791208791208791,"media2sem25":4.76020408163265,"media1sem25":4.81773399014778,"media2sem24":4.65238095238095,"media1sem24":4.58201058201058,"tendencia":"Melhorou"},{"nome":"Bruna Pacheco Batista","dirLeader":"Fernando Fortes","dims":{"Confiança":4.3076923076923075,"Escopo adequado":4.384615384615385,"Apoio":4.269230769230769,"Relacionamento":4.3076923076923075,"Resultados":4.1923076923076925,"Formação pessoas":3.769230769230769,"Comunicação":4.384615384615385},"media1sem26":4.230769230769232,"media2sem25":4.12244897959184,"media1sem25":4.29556650246305,"media2sem24":3.91428571428571,"media1sem24":null,"tendencia":"Melhorou"},{"nome":"Francisco José Riul","dirLeader":"Fernando Fortes","dims":{"Confiança":4.6923076923076925,"Escopo adequado":4.576923076923077,"Apoio":4.6923076923076925,"Relacionamento":4.6923076923076925,"Resultados":4.615384615384615,"Formação pessoas":4.076923076923077,"Comunicação":4.730769230769231},"media1sem26":4.582417582417583,"media2sem25":4.3469387755102,"media1sem25":4.32019704433497,"media2sem24":3.66995073891626,"media1sem24":null,"tendencia":"Melhorou"},{"nome":"Gustavo Figueiredo Pinzan","dirLeader":"Fernando Fortes","dims":{"Confiança":4.615384615384615,"Escopo adequado":4.846153846153846,"Apoio":4.769230769230769,"Relacionamento":4.653846153846154,"Resultados":4.538461538461538,"Formação pessoas":4.423076923076923,"Comunicação":4.461538461538462},"media1sem26":4.615384615384615,"media2sem25":4.54081632653061,"media1sem25":4.71428571428571,"media2sem24":4.35714285714286,"media1sem24":4.24867724867725,"tendencia":"Melhorou"},{"nome":"Amanda Morgado Darcie","dirLeader":"Guilherme Said","dims":{"Confiança":4.407407407407407,"Escopo adequado":4.444444444444445,"Apoio":4.37037037037037,"Relacionamento":4.296296296296297,"Resultados":4.185185185185185,"Formação pessoas":4,"Comunicação":4.333333333333333},"media1sem26":4.29100529100529,"media2sem25":4.41836734693878,"media1sem25":4.36453201970443,"media2sem24":3.76958525345622,"media1sem24":3.73015873015873,"tendencia":"Melhorou"},{"nome":"Daniela Monezi Lelis","dirLeader":"Guilherme Said","dims":{"Confiança":4.653846153846154,"Escopo adequado":4.653846153846154,"Apoio":4.6923076923076925,"Relacionamento":4.5,"Resultados":4.6923076923076925,"Formação pessoas":4.153846153846154,"Comunicação":4.5},"media1sem26":4.549450549450549,"media2sem25":4.44897959183674,"media1sem25":4.49261083743842,"media2sem24":4.24884792626728,"media1sem24":4.18518518518519,"tendencia":"Piorou"},{"nome":"Iara Piccoli Cavasso","dirLeader":"Guilherme Said","dims":{"Confiança":4.653846153846154,"Escopo adequado":4.653846153846154,"Apoio":4.538461538461538,"Relacionamento":4.5,"Resultados":4.769230769230769,"Formação pessoas":4,"Comunicação":4.5},"media1sem26":4.516483516483516,"media2sem25":4.36734693877551,"media1sem25":4.40886699507389,"media2sem24":4.33333333333333,"media1sem24":4.34391534391534,"tendencia":"Novo sócio"},{"nome":"Mateus Augusto Ragozoni","dirLeader":"Guilherme Said","dims":{"Confiança":4.769230769230769,"Escopo adequado":4.6923076923076925,"Apoio":4.653846153846154,"Relacionamento":4.538461538461538,"Resultados":4.5,"Formação pessoas":3.8846153846153846,"Comunicação":4.384615384615385},"media1sem26":4.489010989010988,"media2sem25":4.57635467980296,"media1sem25":4.47290640394089,"media2sem24":4.23963133640553,"media1sem24":4.35449735449735,"tendencia":"Melhorou"},{"nome":"Pedro Antonio Miguel","dirLeader":"Guilherme Said","dims":{"Confiança":4.576923076923077,"Escopo adequado":4.538461538461538,"Apoio":4.653846153846154,"Relacionamento":4.615384615384615,"Resultados":4.538461538461538,"Formação pessoas":3.923076923076923,"Comunicação":4.346153846153846},"media1sem26":4.456043956043957,"media2sem25":4.39285714285714,"media1sem25":4.48275862068966,"media2sem24":4.21428571428571,"media1sem24":4.29100529100529,"tendencia":"Melhorou"},{"nome":"Felipe Luccas Gerardi","dirLeader":"Lucas Damando","dims":{"Confiança":4.038461538461538,"Escopo adequado":4.269230769230769,"Apoio":3.8461538461538463,"Relacionamento":4.038461538461538,"Resultados":3.8076923076923075,"Formação pessoas":3.423076923076923,"Comunicação":3.6923076923076925},"media1sem26":3.8736263736263736,"media2sem25":3.92857142857143,"media1sem25":4.02463054187192,"media2sem24":3.70476190476191,"media1sem24":3.85714285714286,"tendencia":"Melhorou"},{"nome":"Gabriel Bassani Rissi","dirLeader":"Lucas Damando","dims":{"Confiança":4.653846153846154,"Escopo adequado":4.423076923076923,"Apoio":4.346153846153846,"Relacionamento":4.384615384615385,"Resultados":4.653846153846154,"Formação pessoas":4.5,"Comunicação":4.3076923076923075},"media1sem26":4.467032967032966,"media2sem25":4.56122448979592,"media1sem25":4.55665024630542,"media2sem24":4.2952380952381,"media1sem24":4.47619047619048,"tendencia":"Piorou"},{"nome":"Joao Pedro Galanti","dirLeader":"Lucas Damando","dims":{"Confiança":4.538461538461538,"Escopo adequado":4.346153846153846,"Apoio":4.346153846153846,"Relacionamento":4.576923076923077,"Resultados":4.230769230769231,"Formação pessoas":3.923076923076923,"Comunicação":4.346153846153846},"media1sem26":4.329670329670329,"media2sem25":4.35714285714286,"media1sem25":4.24630541871921,"media2sem24":3.90952380952381,"media1sem24":null,"tendencia":"Piorou"},{"nome":"Lucas Renan da Silva Mendes","dirLeader":"Lucas Damando","dims":{"Confiança":4.538461538461538,"Escopo adequado":4.730769230769231,"Apoio":4.423076923076923,"Relacionamento":4.461538461538462,"Resultados":4.576923076923077,"Formação pessoas":4,"Comunicação":4.230769230769231},"media1sem26":4.4230769230769225,"media2sem25":4.40816326530612,"media1sem25":4.28571428571429,"media2sem24":4.00476190476191,"media1sem24":4.04761904761905,"tendencia":"Melhorou"},{"nome":"Otávio de Oliveira e Silva","dirLeader":"Lucas Damando","dims":{"Confiança":3.8518518518518516,"Escopo adequado":4.2592592592592595,"Apoio":3.8518518518518516,"Relacionamento":4,"Resultados":3.740740740740741,"Formação pessoas":3.6666666666666665,"Comunicação":3.740740740740741},"media1sem26":3.873015873015873,"media2sem25":3.94387755102041,"media1sem25":4.05418719211823,"media2sem24":3.65714285714286,"media1sem24":3.52380952380952,"tendencia":"Piorou"},{"nome":"Thalita Carolina Condotta","dirLeader":"Lucas Damando","dims":{"Confiança":4.538461538461538,"Escopo adequado":4.384615384615385,"Apoio":4.269230769230769,"Relacionamento":4.346153846153846,"Resultados":3.9615384615384617,"Formação pessoas":3.769230769230769,"Comunicação":4.153846153846154},"media1sem26":4.2032967032967035,"media2sem25":4.18367346938776,"media1sem25":4.22660098522168,"media2sem24":3.9952380952381,"media1sem24":4.23979591836735,"tendencia":"Melhorou"},{"nome":"Ana Carolina de Oliveira Adão e Oliveira","dirLeader":"Priscila Shiogiri","dims":{"Confiança":4.5,"Escopo adequado":4.423076923076923,"Apoio":4.346153846153846,"Relacionamento":4.538461538461538,"Resultados":4.076923076923077,"Formação pessoas":4.038461538461538,"Comunicação":4.230769230769231},"media1sem26":4.3076923076923075,"media2sem25":4.30612244897959,"media1sem25":4.29556650246305,"media2sem24":4.00952380952381,"media1sem24":4.02645502645503,"tendencia":"Melhorou"},{"nome":"Heloisa Paterra Couto","dirLeader":"Priscila Shiogiri","dims":{"Confiança":4.333333333333333,"Escopo adequado":4.185185185185185,"Apoio":4.148148148148148,"Relacionamento":4.333333333333333,"Resultados":4.148148148148148,"Formação pessoas":3.740740740740741,"Comunicação":3.7037037037037037},"media1sem26":4.084656084656085,"media2sem25":4.05102040816327,"media1sem25":4.16666666666667,"media2sem24":4.05238095238095,"media1sem24":3.99470899470899,"tendencia":"Melhorou"},{"nome":"Mariana Gomes Fernandes","dirLeader":"Priscila Shiogiri","dims":{"Confiança":4.884615384615385,"Escopo adequado":4.730769230769231,"Apoio":4.730769230769231,"Relacionamento":4.6923076923076925,"Resultados":4.538461538461538,"Formação pessoas":4.153846153846154,"Comunicação":4.576923076923077},"media1sem26":4.615384615384615,"media2sem25":4.62244897959184,"media1sem25":4.52216748768473,"media2sem24":null,"media1sem24":null,"tendencia":"Melhorou"}];
 
 const USERS = {
+  "fabio@brioincorporadora.com.br": {pass:"Fabio!2026Inicial", role:"ceo", dir:null, name:"Fábio · CEO", socio:null},
   "priscila.shiogiri@brioincorporadora.com.br": {pass:"priscila2026", role:"diretor", dir:"Priscila Shiogiri", name:"Priscila Shiogiri", socio:"Priscila Kaory Shiogiri"},
   "guilherme.said@brioincorporadora.com.br":    {pass:"guilherme2026", role:"diretor", dir:"Guilherme Said",    name:"Guilherme Said", socio:"Guilherme Santoro Said"},
   "carlos.neto@brioincorporadora.com.br":       {pass:"carlos2026",    role:"diretor", dir:"Carlos Consoni",   name:"Carlos Consoni", socio:"Carlos Antenor Consoni Neto"},
@@ -582,19 +597,74 @@ let movMotivoFilter = "";
 let selectedSocio = "";
 let charts = {};
 
+// Demo-only password persistence. This does not provide server authorization.
+const PASSWORD_PREFIX = 'brio.demo.password.v1:';
+async function passwordDigest(password, salt){
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']);
+  const bits = await crypto.subtle.deriveBits({name:'PBKDF2', salt:Uint8Array.from(salt), iterations:600000, hash:'SHA-256'}, key, 256);
+  return Array.from(new Uint8Array(bits)).map(n=>n.toString(16).padStart(2,'0')).join('');
+}
+async function verifyPassword(email, password){
+  const saved = localStorage.getItem(PASSWORD_PREFIX + email);
+  if(!saved) return !!USERS[email] && USERS[email].pass === password;
+  const record = JSON.parse(saved);
+  return await passwordDigest(password, record.salt) === record.hash;
+}
+const passwordDialog = document.getElementById('passwordDialog');
+document.getElementById('changePasswordBtn').addEventListener('click', ()=>{
+  if(!currentUser) return;
+  document.getElementById('passwordForm').reset();
+  document.getElementById('passwordError').textContent = '';
+  passwordDialog.showModal();
+  document.getElementById('oldPassword').focus();
+});
+document.getElementById('cancelPasswordBtn').addEventListener('click', ()=>passwordDialog.close());
+passwordDialog.addEventListener('close', ()=>document.getElementById('passwordForm').reset());
+document.getElementById('passwordForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  if(!currentUser) return;
+  const email = currentUser.email;
+  const oldPass = document.getElementById('oldPassword').value;
+  const newPass = document.getElementById('newPassword').value;
+  const confirmPass = document.getElementById('confirmPassword').value;
+  const error = document.getElementById('passwordError');
+  const button = document.getElementById('savePasswordBtn');
+  error.textContent = '';
+  if(newPass.length < 12){ error.textContent = 'Use pelo menos 12 caracteres.'; return; }
+  if(newPass !== confirmPass){ error.textContent = 'A confirmação não coincide com a nova senha.'; return; }
+  if(newPass === oldPass){ error.textContent = 'Escolha uma senha diferente da atual.'; return; }
+  button.disabled = true;
+  try{
+    if(!await verifyPassword(email, oldPass)){error.textContent = 'Senha atual incorreta.'; return;}
+    const salt = Array.from(crypto.getRandomValues(new Uint8Array(16)));
+    const hash = await passwordDigest(newPass, salt);
+    if(!currentUser || currentUser.email !== email || !passwordDialog.open) return;
+    localStorage.setItem(PASSWORD_PREFIX + email, JSON.stringify({salt,hash}));
+    passwordDialog.close();
+    document.getElementById('passwordStatus').textContent = 'Senha alterada neste navegador.';
+  }catch{ error.textContent = 'Não foi possível salvar. Verifique se o navegador permite armazenamento local e criptografia (HTTPS ou arquivo local).'; }
+  finally{ button.disabled = false; }
+});
 // ---------- LOGIN ----------
-document.getElementById('loginForm').addEventListener('submit', function(e){
+document.getElementById('loginForm').addEventListener('submit', async function(e){
   e.preventDefault();
   const email = document.getElementById('loginEmail').value.trim().toLowerCase();
   const pass = document.getElementById('loginPass').value;
   const u = USERS[email];
   const errBox = document.getElementById('loginError');
-  if(!u || u.pass !== pass){
+  let valid = false;
+  try { valid = !!u && await verifyPassword(email, pass); }
+  catch { errBox.textContent = 'Não foi possível consultar a senha salva neste navegador.'; errBox.style.display = 'block'; return; }
+  errBox.textContent = 'E-mail ou senha incorretos. Confira os dados e tente novamente.';
+  if(!valid){
     errBox.style.display = 'block';
     return;
   }
   errBox.style.display = 'none';
   currentUser = {...u, email};
+  delete currentUser.pass;
+  document.getElementById('loginPass').value = '';
+  document.getElementById('passwordStatus').textContent = '';
   if(currentUser.role === 'diretor'){
     filters.dir = currentUser.dir;
   }
@@ -613,12 +683,12 @@ function startApp(){
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   document.getElementById('sbUserName').textContent = currentUser.name;
-  document.getElementById('sbUserRole').textContent = currentUser.role === 'admin' ? 'ADMINISTRADOR' : 'DIRETORIA';
+  document.getElementById('sbUserRole').textContent = currentUser.role === 'admin' ? 'ADMINISTRADOR' : currentUser.role === 'ceo' ? 'CEO · VISÃO COMPLETA' : 'DIRETORIA';
 
-  const isAdmin = currentUser.role === 'admin';
-  document.getElementById('uploadBox').style.display = isAdmin ? 'block' : 'none';
-  document.getElementById('adminTools').style.display = isAdmin ? 'block' : 'none';
-  document.getElementById('fDiretoria').disabled = !isAdmin;
+  const isAdmin = currentUser.role === 'admin' || currentUser.role === 'ceo';
+  document.getElementById('uploadBox').style.display = currentUser.role === 'admin' ? 'block' : 'none';
+  document.getElementById('adminTools').style.display = currentUser.role === 'admin' ? 'block' : 'none';
+  document.getElementById('fDiretoria').disabled = currentUser.role === 'diretor';
 
   document.getElementById('rowCount').textContent = dataset.length;
   buildFilterOptions();
@@ -752,7 +822,7 @@ function uniqueSorted(arr, key, extraFilter){
 }
 
 function buildFilterOptions(){
-  const isAdmin = currentUser.role === 'admin';
+  const isAdmin = currentUser.role === 'admin' || currentUser.role === 'ceo';
   const dirSel = document.getElementById('fDiretoria');
   const areaSel = document.getElementById('fArea');
   const ccSel = document.getElementById('fCC');
@@ -865,7 +935,7 @@ const FILTER_LABELS = {dir:'Diretoria', area:'Área', cc:'CC Unificado', nomeCR:
 
 function renderActiveFilters(){
   const chipsRow = document.getElementById('chipsRow');
-  const isAdmin = currentUser.role === 'admin';
+  const isAdmin = currentUser.role === 'admin' || currentUser.role === 'ceo';
   const keys = Object.keys(filters).filter(k => filters[k] && !(k==='dir' && !isAdmin));
   if(keys.length === 0){ chipsRow.style.display = 'none'; chipsRow.innerHTML=''; return; }
   chipsRow.style.display = 'flex';
@@ -1260,7 +1330,7 @@ function socioNameForDir(dirName){
 
 function buildSocioOptions(){
   const sel = document.getElementById('fSocio');
-  const isAdmin = currentUser.role === 'admin';
+  const isAdmin = currentUser.role === 'admin' || currentUser.role === 'ceo';
   let names;
 
   if(isAdmin){
