@@ -377,6 +377,19 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     .kpi-row{grid-template-columns:repeat(3,1fr);}
     .panels{grid-template-columns:1fr;}
   }
+
+ .history-controls{display:flex;flex-wrap:wrap;gap:16px;align-items:end;padding:16px;margin-bottom:20px;border:1px solid var(--line);border-radius:12px;background:var(--panel);}
+ .history-controls label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;}
+ .history-controls select{background:var(--bg);color:var(--text);padding:10px;border:1px solid var(--line);border-radius:8px;max-width:100%;}
+ .history-controls button{width:auto;margin-left:auto;}
+ .history-note{font-size:12px;color:var(--muted);margin:0 0 12px;}
+ #historyImportDialog{background:var(--panel);color:var(--text);border:1px solid var(--gold);border-radius:16px;padding:28px;width:min(620px,94vw);max-height:90vh;overflow:auto;}
+ #historyImportDialog::backdrop{background:rgba(18,5,8,.7);}
+ #historyImportDialog fieldset{border:0;padding:0;margin:0;}
+ #importPreview{font-size:13px;line-height:1.5;overflow-wrap:anywhere;}
+ #importPreview:empty{display:none;}
+ .history-warning{font-size:12px;color:var(--gold);line-height:1.5;}
+ [hidden]{display:none!important;}
 </style>
 </head>
 <body>
@@ -415,6 +428,24 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     <button type="submit" id="savePasswordBtn" class="login-btn">Salvar nova senha</button>
     <button type="button" id="cancelPasswordBtn" class="link-btn">Cancelar</button>
   </form>
+</dialog>
+
+<dialog id="historyImportDialog" aria-labelledby="historyImportTitle">
+ <h2 id="historyImportTitle">Importar planilha mensal</h2>
+ <p class="history-warning">Informe o período real de cada indicador. A quantidade de linhas pode mudar; os meses anteriores serão preservados.</p>
+ <form id="historyImportForm">
+  <div class="field"><label for="importTurnover">COMPETÊNCIA DO TURNOVER</label><input id="importTurnover" type="month" min="2000-01" max="2100-12" required></div>
+  <div class="field"><label for="importBanco">COMPETÊNCIA DO BANCO DE HORAS</label><input id="importBanco" type="month" min="2000-01" max="2100-12" required></div>
+  <div class="field"><label for="historyFile">PLANILHA EXCEL (.XLSX)</label><input id="historyFile" type="file" accept=".xlsx" required></div>
+  <label style="display:block;font-size:13px;margin-bottom:16px"><input type="checkbox" id="importExtras"> Atualizar também Movimentações e Avaliação de Sócios, quando presentes.</label>
+  <p class="history-note">As abas adicionais mantêm seus próprios períodos. Sem marcar esta opção, seus dados atuais serão preservados.</p>
+  <button id="analyzeHistoryImport" type="submit" class="login-btn">Analisar planilha</button>
+ </form>
+ <div id="importPreview" aria-live="polite"></div>
+ <label id="confirmRevisionWrap" hidden style="display:block;font-size:13px;margin:16px 0"><input id="confirmRevision" type="checkbox"> Confirmo a revisão dos períodos existentes caso os dados tenham mudado.</label>
+ <p id="importError" role="status" class="history-warning"></p>
+ <button id="commitHistoryImport" type="button" class="login-btn" disabled>Confirmar importação</button>
+ <button id="closeHistoryImport" type="button" class="link-btn">Fechar</button>
 </dialog>
 <!-- ============ APP ============ -->
 <div id="app">
@@ -473,7 +504,14 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       <p>Acompanhe turnover, banco de horas e tempo de casa por diretoria, área e centro de custo.</p>
     </div>
 
-    <div class="tabs">
+    <div class="history-controls">
+ <div><label for="historyTurnover">Turnover / quadro / tempo de casa</label><select id="historyTurnover"></select></div>
+ <div><label for="historyBanco">Banco de horas</label><select id="historyBanco"></select></div>
+ <button type="button" id="openHistoryImport" class="change-pass-btn" hidden>Importar planilha</button>
+</div>
+<p id="historyError" class="history-warning" role="status"></p>
+<p id="historyEmpty" class="history-note"></p>
+<div class="tabs">
       <button class="tab-btn active" data-tab="ativos">Ativos, Movimentação &amp; Tempo de Casa</button>
       <button class="tab-btn" data-tab="banco">Banco de Horas</button>
       <button class="tab-btn" data-tab="movs">Movimentações</button>
@@ -483,7 +521,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     <div class="chips-row" id="chipsRow" style="display:none;"></div>
 
     <!-- TAB 1 -->
-    <div id="tabAtivos">
+    <div id="tabAtivos"><p id="turnoverPeriodNote" class="history-note"></p>
       <div class="kpi-row">
         <div class="kpi-card"><div class="lbl">ATIVOS</div><div class="val" id="kpiAtivos">0</div></div>
         <div class="kpi-card"><div class="lbl">ADMISSÕES</div><div class="val" id="kpiAdm">0</div><span class="sub neutral">entradas</span></div>
@@ -514,7 +552,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </div>
 
     <!-- TAB 2 -->
-    <div id="tabBanco" style="display:none;">
+    <div id="tabBanco" style="display:none;"><p id="bancoPeriodNote" class="history-note"></p>
       <div class="kpi-row" style="grid-template-columns:repeat(4,1fr);">
         <div class="kpi-card"><div class="lbl">BH + (HORAS)</div><div class="val" id="kpiBhPos">0</div><span class="sub ok">saldo positivo</span></div>
         <div class="kpi-card"><div class="lbl">PESSOAS COM BH +</div><div class="val" id="kpiPessoasPos">0</div></div>
@@ -552,7 +590,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </div>
 
     <!-- TAB 3: MOVIMENTAÇÕES -->
-    <div id="tabMovs" style="display:none;">
+    <div id="tabMovs" style="display:none;"><p class="history-note">Última base de movimentações importada. Os seletores de turnover e banco de horas não alteram esta aba.</p>
       <div class="kpi-row" style="grid-template-columns:repeat(5,1fr);">
         <div class="kpi-card"><div class="lbl">MOVIMENTAÇÕES</div><div class="val" id="kpiMovTotal">0</div></div>
         <div class="kpi-card"><div class="lbl">PROMOÇÕES</div><div class="val" id="kpiMovProm">0</div></div>
@@ -599,7 +637,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </div>
 
     <!-- TAB 4: AVALIAÇÃO DE SÓCIOS -->
-    <div id="tabSocios" style="display:none;">
+    <div id="tabSocios" style="display:none;"><p class="history-note">Avaliações conforme seus períodos semestrais. Os seletores mensais não alteram esta aba.</p>
       <div class="kpi-row" style="grid-template-columns:repeat(4,1fr);">
         <div class="kpi-card"><div class="lbl" id="kpiSocioNotaLbl">NOTA GERAL</div><div class="val" id="kpiSocioNota">0,00</div></div>
         <div class="kpi-card"><div class="lbl" id="kpiSocioMediaLbl">MÉDIA DA SOCIEDADE</div><div class="val" id="kpiSocioMedia">0,00</div></div>
@@ -651,6 +689,166 @@ let movMotivoFilter = "";
 let selectedSocio = "";
 let charts = {};
 
+let bankDataset=[];
+let historyCatalog=[];
+let chosenTurnover='';
+let chosenBanco='';
+let historyRequest=0;
+let pendingImport=null;
+let importBusy=false;
+const historyDialog=document.getElementById('historyImportDialog');
+const monthLabel=value=>value ? new Intl.DateTimeFormat('pt-BR',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(value+'T12:00:00Z')) : 'Sem competência';
+function historySource(){
+  const rows=new Map();
+  [...dataset,...bankDataset].forEach(r=>rows.set([r.dir,r.area,r.cc,r.nomeCR,r.estagio].join('|'),r));
+  return [...rows.values()];
+}
+function matchesFilters(d){return (!filters.dir||d.dir===filters.dir)&&(!filters.area||d.area===filters.area)&&(!filters.cc||d.cc===filters.cc)&&(!filters.nomeCR||d.nomeCR===filters.nomeCR)&&(!filters.estagio||d.estagio===filters.estagio);}
+function fillHistorySelect(id,kind,value){
+ const el=document.getElementById(id);el.replaceChildren();
+ for(const item of historyCatalog.filter(r=>r.indicator===kind)){
+  el.add(new Option(monthLabel(item.competence)+' · revisão '+item.revision,item.competence));
+ }
+ el.value=value||'';
+}
+function applyHistory(data){
+ historyCatalog=data.catalog||[];
+ dataset=data.turnover?.rows||[];bankDataset=data.banco_horas?.rows||[];
+ chosenTurnover=data.turnover?.competence||'';chosenBanco=data.banco_horas?.competence||'';
+ movsDataset=data.extra?.movimentacoes||[];periodosDataset=data.extra?.periodos||[];sociosDataset=data.extra?.socios||[];
+ fillHistorySelect('historyTurnover','turnover',chosenTurnover);
+ fillHistorySelect('historyBanco','banco_horas',chosenBanco);
+ document.getElementById('turnoverPeriodNote').textContent='Turnover, quadro e tempo de casa: '+monthLabel(chosenTurnover)+' · revisão '+(data.turnover?.revision||'—');
+ document.getElementById('bancoPeriodNote').textContent='Banco de horas: '+monthLabel(chosenBanco)+' · revisão '+(data.banco_horas?.revision||'—');
+ document.getElementById('historyEmpty').textContent=(!dataset.length||!bankDataset.length)?'Uma das competências não possui registros para seu acesso. Consulte os períodos e filtros.':'';
+}
+async function changeHistory(){
+ const session=sessionGeneration,request=++historyRequest;
+ const turnover=document.getElementById('historyTurnover').value,banco=document.getElementById('historyBanco').value;
+ const errorEl=document.getElementById('historyError');errorEl.textContent='Carregando competências…';
+ document.getElementById('historyTurnover').disabled=true;document.getElementById('historyBanco').disabled=true;
+ try{
+  const {data,error}=await sb.rpc('panel_history_bundle',{p_turnover:turnover||null,p_banco:banco||null});
+  if(error)throw error;
+  if(session!==sessionGeneration||request!==historyRequest)return;
+  applyHistory(data);
+  filters={dir:currentUser.role==='diretor'?currentUser.dir:'',area:'',cc:'',nomeCR:'',estagio:''};
+  buildFilterOptions();buildSocioOptions();renderAll();errorEl.textContent='';
+ }catch{
+  if(session!==sessionGeneration)return;
+  document.getElementById('historyTurnover').value=chosenTurnover;document.getElementById('historyBanco').value=chosenBanco;
+  errorEl.textContent='Não foi possível trocar a competência. Os dados e períodos anteriores foram mantidos.';
+ }finally{
+  if(request===historyRequest){document.getElementById('historyTurnover').disabled=false;document.getElementById('historyBanco').disabled=false;}
+ }
+}
+document.getElementById('historyTurnover').addEventListener('change',changeHistory);
+document.getElementById('historyBanco').addEventListener('change',changeHistory);
+function resetImportPreview(){
+ if(importBusy)return;
+ pendingImport=null;document.getElementById('importPreview').replaceChildren();
+ document.getElementById('commitHistoryImport').disabled=true;
+ document.getElementById('confirmRevisionWrap').hidden=true;document.getElementById('confirmRevision').checked=false;
+ document.getElementById('importError').textContent='';
+}
+document.getElementById('openHistoryImport').addEventListener('click',()=>{
+ if(currentUser?.role!=='admin')return;
+ document.getElementById('historyImportForm').reset();resetImportPreview();
+ historyDialog.showModal();document.getElementById('importTurnover').focus();
+});
+document.getElementById('closeHistoryImport').addEventListener('click',()=>{if(!importBusy)historyDialog.close();});
+historyDialog.addEventListener('cancel',e=>{if(importBusy)e.preventDefault();});
+historyDialog.addEventListener('close',()=>{pendingImport=null;document.getElementById('historyImportForm').reset();});
+for(const id of ['importTurnover','importBanco','historyFile','importExtras'])document.getElementById(id).addEventListener('change',resetImportPreview);
+function setImportBusy(value){
+ importBusy=value;
+ for(const id of ['importTurnover','importBanco','historyFile','importExtras','analyzeHistoryImport','closeHistoryImport','confirmRevision'])document.getElementById(id).disabled=value;
+ document.getElementById('commitHistoryImport').disabled=value||!pendingImport;
+}
+function parseIndicators(wb){
+ const sheet=wb.Sheets['Indicadores'];if(!sheet)throw Error('Aba Indicadores não encontrada.');
+ const headers=XLSX.utils.sheet_to_json(sheet,{header:1,defval:null})[0]||[];
+ const fields={dir:'Diretoria',area:'Áreas',cr:'CR',nomeCR:'Nome CR',cc:'CC Unificado',ativos:'Ativos',adm:'Admissões',resVol:'Rescisões Voluntárias',resInvol:'Rescisões Involuntárias',resTot:'Rescisões (Total)',turnGeral:'Turnover Geral',turnVol:'Turnover Voluntário',turnInvol:'Turnover Involuntário',bhPos:'BH + (horas)',contPos:'Cont. Pessoas +',bhNeg:'BH - (horas)',contNeg:'Cont. Pessoas -',tempo:'Tempo Médio de Casa (Anos)',estagio:'Estágios de cultura'};
+ for(const header of Object.values(fields)){
+  if(!headers.includes(header))throw Error('Coluna obrigatória ausente: '+header);
+  if(headers.filter(h=>h===header).length>1)throw Error('Cabeçalho duplicado: '+header);
+ }
+ const rows=XLSX.utils.sheet_to_json(sheet,{defval:null,blankrows:false});const keys=new Set();
+ if(!rows.length)throw Error('A aba Indicadores está vazia.');
+ if(rows.length>20000)throw Error('Limite de 20.000 linhas por importação.');
+ return rows.map((r,index)=>{
+  const out={};
+  for(const [key,label] of Object.entries(fields)){
+   const value=r[label];
+   if(['dir','area','cr','nomeCR','cc','estagio'].includes(key)){
+    if(['dir','cr'].includes(key)&&(value===null||String(value).trim()===''))throw Error('Linha '+(index+2)+': preencha '+label+'.');
+    if(value!=null&&/[<>]/.test(String(value)))throw Error('Linha '+(index+2)+': texto inválido em '+label+'.');
+    out[key]=key==='cr'&&typeof value==='number'?value:String(value??'').trim();
+   }else{
+    if(typeof value!=='number'||!Number.isFinite(value))throw Error('Linha '+(index+2)+': '+label+' deve ser um número. Confira as fórmulas, recalcule e salve a planilha.');
+    if(key!=='bhNeg'&&value<0)throw Error('Linha '+(index+2)+': valor negativo em '+label+'.');
+    if(['ativos','adm','resVol','resInvol','resTot','contPos','contNeg'].includes(key)&&!Number.isInteger(value))throw Error('Linha '+(index+2)+': contagem fracionada em '+label+'.');
+    out[key]=value;
+   }
+  }
+  if(out.resTot!==out.resVol+out.resInvol)throw Error('Linha '+(index+2)+': total de rescisões não confere.');
+  const key=out.dir.toUpperCase()+'|'+String(out.cr).toUpperCase();
+  if(keys.has(key))throw Error('Linha '+(index+2)+': CR repetido na mesma diretoria.');keys.add(key);
+  return out;
+ });
+}
+document.getElementById('historyImportForm').addEventListener('submit',async e=>{
+ e.preventDefault();if(importBusy||currentUser?.role!=='admin')return;
+ resetImportPreview();const session=sessionGeneration;setImportBusy(true);
+ const message=document.getElementById('importError');message.textContent='Analisando a planilha…';
+ try{
+  const file=document.getElementById('historyFile').files[0];
+  if(!file||!file.name.toLowerCase().endsWith('.xlsx'))throw Error('Selecione uma planilha .xlsx.');
+  const turn=document.getElementById('importTurnover').value,bh=document.getElementById('importBanco').value;
+  if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(turn)||!/^\d{4}-(0[1-9]|1[0-2])$/.test(bh))throw Error('Informe as duas competências.');
+  const wb=XLSX.read(await file.arrayBuffer(),{type:'array'});
+  const rows=parseIndicators(wb);
+  const extras=document.getElementById('importExtras').checked?parseExtraSheets(wb,rows):{};
+  const {data,error}=await sb.rpc('panel_history_bundle',{p_turnover:turn+'-01',p_banco:bh+'-01'});
+  if(error)throw Error('Não foi possível consultar o histórico. Confira se o novo SQL já foi executado.');
+  if(session!==sessionGeneration||!historyDialog.open)return;
+  pendingImport={p_request_id:crypto.randomUUID(),p_source_name:file.name,p_turnover:turn+'-01',p_banco:bh+'-01',p_rows:rows,p_extra:extras,p_expected_turnover:data.turnover?.revision||0,p_expected_banco:data.banco_horas?.revision||0};
+  const summary=document.getElementById('importPreview');
+  for(const text of [file.name,rows.length+' linhas validadas.',
+   'Turnover: '+monthLabel(turn+'-01')+' — '+(data.turnover?'período existente, '+data.turnover.rows.length+' linhas na revisão '+data.turnover.revision:'novo período')+'.',
+   'Banco de horas: '+monthLabel(bh+'-01')+' — '+(data.banco_horas?'período existente, '+data.banco_horas.rows.length+' linhas na revisão '+data.banco_horas.revision:'novo período')+'.',
+   'Os demais meses serão preservados. Reenvios iguais não criam nova revisão.',
+   Object.keys(extras).length?'As abas adicionais presentes serão atualizadas, com cópia da versão anterior.':'Movimentações e avaliações serão mantidas sem alteração.']){
+    const p=document.createElement('p');p.textContent=text;summary.append(p);
+  }
+  document.getElementById('confirmRevisionWrap').hidden=!(data.turnover||data.banco_horas);
+  message.textContent='Confira as competências e a quantidade de linhas antes de confirmar.';
+ }catch(err){message.textContent=err.message;pendingImport=null;}
+ finally{setImportBusy(false);}
+});
+document.getElementById('commitHistoryImport').addEventListener('click',async()=>{
+ if(importBusy||!pendingImport||currentUser?.role!=='admin')return;
+ const confirm=document.getElementById('confirmRevision').checked;
+ const message=document.getElementById('importError');
+ if(!document.getElementById('confirmRevisionWrap').hidden&&!confirm){message.textContent='Marque a confirmação de revisão para continuar.';return;}
+ const session=sessionGeneration;setImportBusy(true);message.textContent='Salvando a importação…';
+ let committed=false;
+ try{
+  const {data,error}=await sb.rpc('panel_history_import',{...pendingImport,p_confirm_revision:confirm});
+  if(error)throw Error(error.message||'Não foi possível salvar. Você pode tentar novamente.');
+  committed=true;
+  if(session!==sessionGeneration)return;
+  pendingImport=null;
+  const {data:bundle,error:loadError}=await sb.rpc('panel_history_bundle');
+  if(loadError)throw Error('Importação salva, mas não foi possível atualizar a tela. Entre novamente para consultar os dados.');
+  if(session!==sessionGeneration)return;
+  applyHistory(bundle);filters={dir:'',area:'',cc:'',nomeCR:'',estagio:''};
+  buildFilterOptions();buildSocioOptions();renderAll();historyDialog.close();
+  document.getElementById('historyError').textContent=(data.turnover.changed||data.banco_horas.changed||data.extrasChanged)?'Importação salva. Exibindo as competências mais recentes.':'Esse conteúdo já estava salvo. Nenhuma revisão foi duplicada.';
+ }catch(err){if(session===sessionGeneration)message.textContent=err.message;}
+ finally{setImportBusy(false);if(committed)document.getElementById('commitHistoryImport').disabled=true;}
+});
+
 // Public URL and publishable key only; access is enforced by database policies.
 const settings = window.PAINEL_CONFIG || {};
 const configured = /^https:\/\/[^/]+\.supabase\.co$/.test(settings.url || '') && !!settings.publishableKey;
@@ -669,7 +867,11 @@ function loginMessage(message){
 function clearPanel(){
   sessionGeneration++;
   currentUser = null;
-  dataset=[];movsDataset=[];periodosDataset=[];sociosDataset=[];
+  dataset=[];bankDataset=[];historyCatalog=[];chosenTurnover='';chosenBanco='';historyRequest++;pendingImport=null;movsDataset=[];periodosDataset=[];sociosDataset=[];
+  if(historyDialog.open)historyDialog.close();
+  document.getElementById('importPreview').replaceChildren();
+  document.getElementById('historyError').textContent='';
+  document.getElementById('historyTurnover').disabled=false;document.getElementById('historyBanco').disabled=false;
   filters={dir:'',area:'',cc:'',nomeCR:'',estagio:''};
   selectedSocio='';movMotivoFilter='';
   Object.values(charts).forEach(c=>{try{c.destroy();}catch{}}); charts={};
@@ -684,12 +886,11 @@ async function loadPanel(){
   if(identityError || !identity.user) throw Error('Sua sessão expirou. Entre novamente.');
   const {data:profile,error:profileError}=await sb.from('panel_profiles').select('name,role,dir,socio').eq('id',identity.user.id).single();
   if(profileError || !profile) throw Error('Este e-mail ainda não tem acesso autorizado ao painel.');
-  const {data,error}=await sb.rpc('panel_load');
+  const {data,error}=await sb.rpc('panel_history_bundle');
   if(error) throw Error('Não foi possível carregar os dados do painel. Confira a configuração do banco.');
   if(generation!==sessionGeneration) return;
   currentUser={...profile,email:identity.user.email};
-  dataset=data.indicadores||[];movsDataset=data.movimentacoes||[];
-  periodosDataset=data.periodos||[];sociosDataset=data.socios||[];
+  applyHistory(data);
   filters={dir:profile.role==='diretor'?profile.dir:'',area:'',cc:'',nomeCR:'',estagio:''};
   document.getElementById('passwordStatus').textContent='';
   startApp();
@@ -773,11 +974,7 @@ document.getElementById('forgotPasswordBtn').addEventListener('click',async e=>{
   }catch{loginMessage('Não foi possível enviar o link agora. Tente novamente mais tarde.');}
   finally{e.target.disabled=false;}
 });
-async function savePanelData(){
-  if(currentUser?.role!=='admin')throw Error('Apenas o administrador pode importar dados.');
-  const {error}=await sb.rpc('panel_replace',{content:{indicadores:dataset,movimentacoes:movsDataset,periodos:periodosDataset,socios:sociosDataset}});
-  if(error)throw Error('Não foi possível salvar a importação no Supabase.');
-}
+
 if(sb){
   sb.auth.onAuthStateChange((event,session)=>{
     if(event==='SIGNED_OUT')clearPanel();
@@ -803,6 +1000,7 @@ function startApp(){
   const uploadBoxEl = document.getElementById('uploadBox');
   if(uploadBoxEl) uploadBoxEl.style.display = currentUser.role === 'admin' ? 'block' : 'none';
   document.getElementById('adminTools').style.display = currentUser.role === 'admin' ? 'block' : 'none';
+  document.getElementById('openHistoryImport').hidden=currentUser.role!=='admin';
   document.getElementById('fDiretoria').disabled = currentUser.role === 'diretor';
 
   const rowCountEl = document.getElementById('rowCount');
@@ -812,43 +1010,17 @@ function startApp(){
   renderAll();
 }
 
-// ---------- FILE UPLOAD (admin only) ----------
-document.getElementById('fileInput')?.addEventListener('change', function(e){
-  const file = e.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = async function(evt){
-    if(currentUser?.role!=='admin') return;
-    const previous={dataset,movsDataset,periodosDataset,sociosDataset};
-    try{
-      const wb = XLSX.read(evt.target.result, {type:'array'});
-      const sheet = wb.Sheets['Indicadores'];
-      if(!sheet){ alert('Aba "Indicadores" não encontrada nesse arquivo.'); return; }
-      const rows = XLSX.utils.sheet_to_json(sheet, {defval:0});
-      const mapped = rows.filter(r => r['Diretoria']).map(r => ({
-        dir: r['Diretoria'], area: r['Áreas'], cr: r['CR'], nomeCR: r['Nome CR'], cc: r['CC Unificado'],
-        ativos: Number(r['Ativos'])||0, adm: Number(r['Admissões'])||0,
-        resVol: Number(r['Rescisões Voluntárias'])||0, resInvol: Number(r['Rescisões Involuntárias'])||0,
-        resTot: Number(r['Rescisões (Total)'])||0,
-        turnGeral: Number(r['Turnover Geral'])||0, turnVol: Number(r['Turnover Voluntário'])||0, turnInvol: Number(r['Turnover Involuntário'])||0,
-        bhPos: Number(r['BH + (horas)'])||0, contPos: Number(r['Cont. Pessoas +'])||0,
-        bhNeg: Number(r['BH - (horas)'])||0, contNeg: Number(r['Cont. Pessoas -'])||0,
-        tempo: Number(r['Tempo Médio de Casa (Anos)'])||0, estagio: r['Estágios de cultura']||''
-      }));
-      if(!mapped.length) throw Error('Planilha sem indicadores.');
-      dataset = mapped;
-      document.getElementById('uploadStatus').innerHTML = '&#10003; ' + file.name + ' · <span>' + dataset.length + '</span> linha(s) carregada(s)';
-      document.getElementById('rowCount').textContent = dataset.length;
-      filters = {dir:"", area:"", cc:"", nomeCR:"", estagio:""};
-
-      // ---- reparse Movimentações e Avaliação de Sócios, se existirem na planilha nova ----
-      const lookup = {};
+function parseExtraSheets(wb,mapped){
+ let movsDataset=null,periodosDataset=null,sociosDataset=null;
+       const lookup = {};
       mapped.forEach(d => { if(d.nomeCR) lookup[normCC(d.nomeCR)] = {dir:d.dir, area:d.area, ccUnif:d.cc, nomeCR:d.nomeCR}; });
       const MANUAL_FALLBACK = { [normCC('MARKETING SO')]: {dir:'Lucas Damando', area:'COMERCIAL', ccUnif:'MARKETING', nomeCR:'MARKETING SO'} };
 
       const movSheet = wb.Sheets['Movimentacoes'];
       if(movSheet){
         try{
+          const mh=XLSX.utils.sheet_to_json(movSheet,{header:1})[0]||[];
+          for(const key of ['NOME DO COLABORADOR','Centro de custo atual','SALÁRIO ATUAL','SALÁRIO PROPOSTO','DATA DA MUDANÇA'])if(!mh.includes(key))throw Error('Coluna ausente: '+key);
           const mrows = XLSX.utils.sheet_to_json(movSheet, {defval:null});
           movsDataset = mrows.filter(r=>r['NOME DO COLABORADOR']).map(r=>{
             const ccraw = r['Centro de custo atual'];
@@ -870,7 +1042,7 @@ document.getElementById('fileInput')?.addEventListener('change', function(e){
               dir: info.dir || null, area: info.area || null, ccUnif: info.ccUnif || null, nomeCR: info.nomeCR || ccraw
             };
           });
-        }catch(err){ console.error('Falha ao reprocessar Movimentações:', err); }
+        }catch(err){ throw Error('Movimentações: '+err.message); }
       }
 
       const avSheet = wb.Sheets['Avaliacao de Socios'] || wb.Sheets['Avaliação de Sócios'];
@@ -878,6 +1050,7 @@ document.getElementById('fileInput')?.addEventListener('change', function(e){
         try{
           const arows = XLSX.utils.sheet_to_json(avSheet, {header:1, defval:null});
           const header = arows[0] || [];
+          for(const key of ['Sócio','Diretor','Geral','Média 1 sem 26',...DIM_ORDER])if(!header.includes(key))throw Error('Coluna ausente: '+key);
           // Column positions in this sheet have shifted before (a "Diretor"
           // column was inserted), so locate columns by header text instead of
           // hardcoded indices — resilient to the base being restructured again.
@@ -919,29 +1092,27 @@ document.getElementById('fileInput')?.addEventListener('change', function(e){
               });
             }
           }
-          if(newPeriodos.length) periodosDataset = newPeriodos;
-          if(newSocios.length) sociosDataset = newSocios;
-        }catch(err){ console.error('Falha ao reprocessar Avaliação de Sócios:', err); }
+          periodosDataset = newPeriodos;
+          sociosDataset = newSocios;
+        }catch(err){ throw Error('Avaliação de Sócios: '+err.message); }
       }
 
-      await savePanelData();
-      buildFilterOptions();
-      buildSocioOptions();
-      renderAll();
-    }catch(err){
-      ({dataset,movsDataset,periodosDataset,sociosDataset}=previous);
-      document.getElementById('uploadStatus').textContent='Importação não concluída.';
-      document.getElementById('rowCount').textContent=dataset.length;
-      buildFilterOptions();buildSocioOptions();renderAll();
-      alert('Importação não concluída. Confira a planilha e a conexão com o Supabase.');
-    }
-  };
-  reader.readAsArrayBuffer(file);
-});
+
+ const extra={};
+ if(movsDataset!==null)extra.movimentacoes=movsDataset;
+ if(periodosDataset!==null)extra.periodos=periodosDataset;
+ if(sociosDataset!==null)extra.socios=sociosDataset;
+ function validate(value){
+  if(typeof value==='number'&&!Number.isFinite(value))throw Error('Valor numérico inválido nas abas adicionais.');
+  if(typeof value==='string'&&/[<>]/.test(value))throw Error('Texto com caracteres < ou > nas abas adicionais. Revise antes de importar.');
+  if(value&&typeof value==='object')Object.values(value).forEach(validate);
+ }
+ validate(extra);return extra;
+}
 
 // ---------- FILTERS ----------
 function uniqueSorted(arr, key, extraFilter){
-  const src = extraFilter ? dataset.filter(extraFilter) : dataset;
+  const src = extraFilter ? arr.filter(extraFilter) : arr;
   return [...new Set(src.map(d => d[key]).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b)));
 }
 
@@ -952,7 +1123,7 @@ function buildFilterOptions(){
   const ccSel = document.getElementById('fCC');
   const crSel = document.getElementById('fNomeCR');
 
-  const dirs = uniqueSorted(dataset, 'dir');
+  const dirs = uniqueSorted(historySource(), 'dir');
   dirSel.innerHTML = '<option value="">Todas</option>' + dirs.map(d=>`<option value="${d}">${d}</option>`).join('');
   dirSel.value = filters.dir || '';
 
@@ -966,17 +1137,17 @@ function buildFilterOptions(){
 
 function refreshDependentFilters(){
   const base = d => (!filters.dir || d.dir === filters.dir);
-  const areas = uniqueSorted(dataset, 'area', base);
+  const areas = uniqueSorted(historySource(), 'area', base);
   const areaSel = document.getElementById('fArea');
   areaSel.innerHTML = '<option value="">Todas</option>' + areas.map(a=>`<option value="${a}">${a}</option>`).join('');
   areaSel.value = filters.area || '';
 
-  const ccs = uniqueSorted(dataset, 'cc', base);
+  const ccs = uniqueSorted(historySource(), 'cc', base);
   const ccSel = document.getElementById('fCC');
   ccSel.innerHTML = '<option value="">Todos</option>' + ccs.map(c=>`<option value="${c}">${c}</option>`).join('');
   ccSel.value = filters.cc || '';
 
-  const crs = uniqueSorted(dataset, 'nomeCR', base);
+  const crs = uniqueSorted(historySource(), 'nomeCR', base);
   const crSel = document.getElementById('fNomeCR');
   crSel.innerHTML = '<option value="">Todos</option>' + crs.map(c=>`<option value="${c}">${c}</option>`).join('');
   crSel.value = filters.nomeCR || '';
@@ -1091,7 +1262,7 @@ function renderAll(){
   safe(()=>renderCRList(rows));
   safe(()=>renderAdmRes(rows));
   safe(()=>renderCultura(rows));
-  safe(()=>renderBanco(rows));
+  safe(()=>renderBanco(bankDataset.filter(matchesFilters)));
   safe(renderMovs);
   safe(renderSocios);
 }
@@ -1577,27 +1748,17 @@ function renderSocios(){
   }catch(err){ console.error('Falha no gráfico de evolução de sócios:', err); }
 }
 
-// ---------- EXPORT PER DIRETORIA (admin) ----------
-document.getElementById('exportBtn').addEventListener('click', function(){
-  const dirs = [...new Set(dataset.map(d=>d.dir).filter(Boolean))];
-  dirs.forEach((dir, i)=>{
-    setTimeout(()=>{
-      const rows = dataset.filter(d=>d.dir===dir).map(d=>({
-        'Diretoria': d.dir, 'Áreas': d.area, 'CR': d.cr, 'Nome CR': d.nomeCR, 'CC Unificado': d.cc,
-        'Ativos': d.ativos, 'Admissões': d.adm, 'Rescisões Voluntárias': d.resVol,
-        'Rescisões Involuntárias': d.resInvol, 'Rescisões (Total)': d.resTot,
-        'BH + (horas)': d.bhPos, 'Cont. Pessoas +': d.contPos, 'BH - (horas)': d.bhNeg,
-        'Cont. Pessoas -': d.contNeg, 'Tempo Médio de Casa (Anos)': d.tempo, 'Estágios de cultura': d.estagio
-      }));
-      const ws = XLSX.utils.json_to_sheet(rows);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Indicadores');
-      const fname = 'Painel_' + dir.replace(/\s+/g,'_') + '.xlsx';
-      XLSX.writeFile(wb, fname);
-    }, i * 350);
-  });
+// ---------- EXPORT POR DIRETORIA E COMPETENCIA ----------
+document.getElementById('exportBtn').addEventListener('click',()=>{
+ if(currentUser?.role!=='admin')return;
+ const dirs=[...new Set(historySource().map(d=>d.dir).filter(Boolean))];
+ for(const dir of dirs){
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(dataset.filter(d=>d.dir===dir).map(d=>({Competencia:chosenTurnover,...d}))),'Turnover');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(bankDataset.filter(d=>d.dir===dir).map(d=>({Competencia:chosenBanco,...d}))),'Banco de horas');
+  XLSX.writeFile(wb,'Painel_'+dir.replace(/\s+/g,'_')+'.xlsx');
+ }
 });
-
 </script>
 </body>
 </html>
