@@ -434,6 +434,10 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
  #importPreview:empty{display:none;}
  .history-warning{font-size:12px;color:var(--gold);line-height:1.5;}
  [hidden]{display:none!important;}
+
+#historyImportDialog [hidden]{display:none!important}
+#importMode{width:100%;padding:12px;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:8px;font:inherit}
+#movImportDialog{width:min(720px,92vw);max-height:90vh;overflow:auto;background:var(--panel);color:var(--text);border:1px solid #d4a24a;border-radius:18px;padding:28px}#movImportDialog::backdrop{background:rgba(0,0,0,.65);backdrop-filter:blur(4px)}#movImportDialog [hidden],#openMovementImport[hidden]{display:none!important}#movImportDialog select,#movFrom,#movTo{padding:10px;background:#281014;color:#fff;border:1px solid #71414a;border-radius:8px;font:inherit}#movImportDialog .login-btn{margin-top:12px}.history-bar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:12px 0}.history-bar .link-btn{width:auto;margin:0}#movImportDialog button:disabled{opacity:.5;cursor:not-allowed}.history-bar label{display:flex;gap:8px;align-items:center}#openMovementImport{width:auto;padding:12px 18px}
 </style>
 </head>
 <body>
@@ -478,11 +482,12 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
  <h2 id="historyImportTitle">Importar planilha mensal</h2>
  <p class="history-warning">Informe o período real de cada indicador. A quantidade de linhas pode mudar; os meses anteriores serão preservados.</p>
  <form id="historyImportForm">
-  <div class="field"><label for="importTurnover">COMPETÊNCIA DO TURNOVER</label><input id="importTurnover" type="month" min="2000-01" max="2100-12" required></div>
-  <div class="field"><label for="importBanco">COMPETÊNCIA DO BANCO DE HORAS</label><input id="importBanco" type="month" min="2000-01" max="2100-12" required></div>
+  <div class="field"><label for="importMode">O QUE DESEJA IMPORTAR?</label><select id="importMode"><option value="consolidado">Base consolidada (turnover e banco de horas)</option><option value="turnover">Somente turnover</option><option value="banco_horas">Somente banco de horas</option></select></div>
+  <div class="field" id="turnoverImportField"><label for="importTurnover">COMPETÊNCIA DO TURNOVER</label><input id="importTurnover" type="month" min="2000-01" max="2100-12" required></div>
+  <div class="field" id="bancoImportField"><label for="importBanco">COMPETÊNCIA DO BANCO DE HORAS</label><input id="importBanco" type="month" min="2000-01" max="2100-12" required></div>
   <div class="field"><label for="historyFile">PLANILHA EXCEL (.XLSX)</label><input id="historyFile" type="file" accept=".xlsx" required></div>
-  <label style="display:block;font-size:13px;margin-bottom:16px"><input type="checkbox" id="importExtras"> Atualizar também Movimentações e Avaliação de Sócios, quando presentes.</label>
-  <p class="history-note">As abas adicionais mantêm seus próprios períodos. Sem marcar esta opção, seus dados atuais serão preservados.</p>
+  <label id="extrasImportField" style="display:block;font-size:13px;margin-bottom:16px"><input type="checkbox" id="importExtras"> Atualizar também Avaliação de Sócios, quando presente.</label>
+  <p id="extrasImportNote" class="history-note">As abas adicionais mantêm seus próprios períodos. Sem marcar esta opção, seus dados atuais serão preservados.</p>
   <button id="analyzeHistoryImport" type="submit" class="login-btn">Analisar planilha</button>
  </form>
  <div id="importPreview" aria-live="polite"></div>
@@ -491,6 +496,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
  <button id="commitHistoryImport" type="button" class="login-btn" disabled>Confirmar importação</button>
  <button id="closeHistoryImport" type="button" class="link-btn">Fechar</button>
 </dialog>
+<dialog id="movImportDialog" aria-labelledby="movImportTitle"><h2 id="movImportTitle">Importar movimentações</h2><p class="history-note">Importe primeiro os indicadores do mês. Este envio atualiza somente a competência selecionada.</p><form id="movImportForm"><div class="field"><label for="movMonth">COMPETÊNCIA</label><input id="movMonth" type="month" min="2000-01" max="2100-12" required></div><div class="field"><label for="movFile">PLANILHA DE MOVIMENTAÇÕES (.XLSX)</label><input id="movFile" type="file" accept=".xlsx" required></div><button id="movAnalyze" class="login-btn" type="submit">Analisar movimentações</button></form><p id="movPreview"></p><div id="movMappings"></div><label id="movConfirmWrap" hidden><input id="movConfirm" type="checkbox"> Confirmo o conteúdo completo deste mês, inclusive a substituição da revisão atual ou a ausência de movimentações.</label><p id="movImportError" role="status" class="history-warning"></p><button id="movCommit" class="login-btn" type="button" disabled>Confirmar importação</button><button id="movClose" class="link-btn" type="button">Fechar</button></dialog>
 <!-- ============ APP ============ -->
 <div id="app">
 <div class="shell">
@@ -634,7 +640,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </div>
 
     <!-- TAB 3: MOVIMENTAÇÕES -->
-    <div id="tabMovs" style="display:none;"><p class="history-note">Última base de movimentações importada. Os seletores de turnover e banco de horas não alteram esta aba.</p>
+    <div id="tabMovs" style="display:none;"><div class="history-bar"><label>DE <select id="movFrom"></select></label><label>ATÉ <select id="movTo"></select></label><button id="movAll" type="button" class="link-btn">Todo o histórico</button><button id="openMovementImport" type="button" class="login-btn" hidden>Importar movimentações</button></div><p id="movPeriodNote" class="history-note"></p>
       <div class="kpi-row" style="grid-template-columns:repeat(5,1fr);">
         <div class="kpi-card"><div class="lbl">MOVIMENTAÇÕES</div><div class="val" id="kpiMovTotal">0</div></div>
         <div class="kpi-card"><div class="lbl">PROMOÇÕES</div><div class="val" id="kpiMovProm">0</div></div>
@@ -733,6 +739,143 @@ let movMotivoFilter = "";
 let selectedSocio = "";
 let charts = {};
 
+let movPending=null,movBusy=false,movCandidates=[],movParsed=[],movContext=null;
+const movDialog=document.getElementById('movImportDialog');
+function syncMovementPeriods(){
+ const months=historyCatalog.filter(x=>x.indicator==='movimentacoes').map(x=>x.competence).sort();
+ for(const id of ['movFrom','movTo']){
+  const el=document.getElementById(id),previous=el.value;el.replaceChildren();
+  months.forEach(m=>el.add(new Option(monthLabel(m),m)));
+  el.value=months.includes(previous)?previous:(id==='movFrom'?months[0]:months.at(-1))||'';
+ }
+}
+for(const id of ['movFrom','movTo'])document.getElementById(id).addEventListener('change',()=>{movMotivoFilter='';renderMovs();});
+document.getElementById('movAll').addEventListener('click',()=>{
+ const from=document.getElementById('movFrom'),to=document.getElementById('movTo');
+ from.selectedIndex=0;to.selectedIndex=to.options.length-1;movMotivoFilter='';renderMovs();
+});
+function resetMovementImport(){
+ movPending=null;movContext=null;movParsed=[];movCandidates=[];
+ document.getElementById('movPreview').replaceChildren();document.getElementById('movMappings').replaceChildren();
+ document.getElementById('movCommit').disabled=true;document.getElementById('movConfirm').checked=false;
+ document.getElementById('movConfirmWrap').hidden=true;document.getElementById('movImportError').textContent='';
+}
+function movementBusy(value){
+ movBusy=value;for(const el of movDialog.querySelectorAll('input,select,button'))el.disabled=value;
+ document.getElementById('movCommit').disabled=value||!movPending;
+}
+document.getElementById('openMovementImport').addEventListener('click',()=>{
+ if(currentUser?.role!=='admin')return;
+ document.getElementById('movImportForm').reset();resetMovementImport();movDialog.showModal();
+});
+document.getElementById('movClose').addEventListener('click',()=>{if(!movBusy)movDialog.close();});
+movDialog.addEventListener('cancel',e=>{if(movBusy)e.preventDefault();});
+movDialog.addEventListener('close',resetMovementImport);
+for(const id of ['movFile','movMonth'])document.getElementById(id).addEventListener('change',resetMovementImport);
+function movementDate(v,wb){
+ let iso;
+ if(typeof v==='number'){
+  const d=XLSX.SSF.parse_date_code(v,{date1904:!!wb.Workbook?.WBProps?.date1904});
+  if(d)iso=`${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;
+ }else if(typeof v==='string'){
+  const t=v.trim();if(/^\d{4}-\d{2}-\d{2}$/.test(t))iso=t;
+  else if(/^\d{2}\/\d{2}\/\d{4}$/.test(t))iso=t.split('/').reverse().join('-');
+ }
+ if(!iso||!Number.isFinite(Date.parse(iso+'T00:00:00Z'))||new Date(iso+'T00:00:00Z').toISOString().slice(0,10)!==iso)throw Error('Data da Mudança inválida. Use uma data do Excel ou DD/MM/AAAA.');
+ return iso;
+}
+function parseMovements(wb,month){
+ const sheet=wb.Sheets['Movimentações']||wb.Sheets['Movimentacoes'];
+ if(!sheet)throw Error('Aba Movimentações não encontrada.');
+ const matrix=XLSX.utils.sheet_to_json(sheet,{header:1,defval:null,raw:true,blankrows:false});
+ const headers=matrix[0]||[];
+ const fields={nome:'NOME DO COLABORADOR',empresaDe:'EMPRESA DE',empresaPara:'EMPRESA PARA',tipo:'TIPO DE MOVIMENTAÇÃO',centroCusto:'Centro de custo atual',cargoAtual:'CARGO ATUAL',cargoProposto:'CARGO PROPOSTO',salAtual:'SALÁRIO ATUAL',salProposto:'SALÁRIO PROPOSTO',data:'DATA DA MUDANÇA',motivo:'ATUAL MOTIVO',gestorAtual:'Gestor Atual'};
+ for(const h of Object.values(fields))if(headers.filter(x=>x===h).length!==1)throw Error('Coluna ausente ou duplicada: '+h);
+ const rows=matrix.slice(1).map(values=>Object.fromEntries(headers.map((h,i)=>[h,values[i]])));
+ if(rows.length>20000)throw Error('Limite de 20.000 linhas.');
+ const seen=new Set();
+ return rows.map((r,i)=>{
+  const out={};
+  for(const [k,h] of Object.entries(fields)){
+   const v=r[h];
+   if(k==='data'){out[k]=movementDate(v,wb);if(out[k].slice(0,7)!==month)throw Error('Linha '+(i+2)+': Data da Mudança fora da competência selecionada.');}
+   else if(k==='salAtual'||k==='salProposto'){
+    if(typeof v!=='number'||!Number.isFinite(v)||v<0)throw Error('Linha '+(i+2)+': salário inválido em '+h);out[k]=v;
+   }else{
+    out[k]=String(v??'').trim();if(/[<>]/.test(out[k]))throw Error('Linha '+(i+2)+': texto inválido em '+h);
+    if(['nome','centroCusto'].includes(k)&&!out[k])throw Error('Linha '+(i+2)+': preencha '+h);
+   }
+  }
+  if(r['Mês']!=null&&r['Mês']!==''&&Number(r['Mês'])!==Number(month.slice(5)))throw Error('Linha '+(i+2)+': coluna Mês diverge da Data da Mudança.');
+  const key=JSON.stringify(out);if(seen.has(key))throw Error('Linha '+(i+2)+': registro idêntico repetido.');seen.add(key);
+  return out;
+ });
+}
+function prepareMappedMovements(){
+ movPending=null;if(!movContext)return;
+ const choices=new Map();
+ for(const select of document.querySelectorAll('#movMappings select')){
+  if(!select.value){document.getElementById('movCommit').disabled=true;return;}
+  choices.set(select.dataset.key,movCandidates[Number(select.value)]);
+ }
+ const rows=movParsed.map(r=>{
+  const key=normCC(r.centroCusto),matches=movCandidates.filter(x=>normCC(x.nomeCR)===key);
+  const info=choices.get(key)||(matches.length===1?matches[0]:null);
+  if(!info)throw Error('Centro de custo não associado.');
+  return {...r,dir:info.dir,cr:info.cr};
+ });
+ movPending={...movContext,p_rows:rows};document.getElementById('movCommit').disabled=movBusy;
+}
+document.getElementById('movImportForm').addEventListener('submit',async e=>{
+ e.preventDefault();if(movBusy||currentUser?.role!=='admin')return;
+ resetMovementImport();movementBusy(true);const session=sessionGeneration;
+ try{
+  const month=document.getElementById('movMonth').value,file=document.getElementById('movFile').files[0];
+  if(!/^(20\d{2}|2100)-(0[1-9]|1[0-2])$/.test(month))throw Error('Informe mês e ano válidos.');
+  if(!file||!file.name.toLowerCase().endsWith('.xlsx'))throw Error('Selecione o arquivo .xlsx.');
+  const rows=parseMovements(XLSX.read(await file.arrayBuffer(),{type:'array'}),month);
+  const {data,error}=await sb.rpc('panel_history_bundle',{p_turnover:month+'-01'});
+  if(error)throw Error('Não foi possível consultar a base mensal.');
+  if(session!==sessionGeneration||!movDialog.open)return;
+  if(!data.turnover)throw Error('Importe primeiro a base de indicadores de turnover deste mês.');
+  movParsed=rows;movCandidates=data.turnover.rows;
+  const revision=data.catalog.find(x=>x.indicator==='movimentacoes'&&x.competence===month+'-01')?.revision||0;
+  movContext={p_request_id:crypto.randomUUID(),p_source_name:file.name,p_competence:month+'-01',p_expected_revision:revision,p_expected_turnover:data.turnover.revision};
+  const box=document.getElementById('movMappings');
+  const missing=[...new Set(rows.map(r=>normCC(r.centroCusto)))].filter(key=>movCandidates.filter(x=>normCC(x.nomeCR)===key).length!==1);
+  for(const key of missing){
+   const label=document.createElement('label');label.style.display='block';label.style.marginBottom='12px';
+   label.append(document.createTextNode('Associar '+rows.find(r=>normCC(r.centroCusto)===key).centroCusto+': '));
+   const select=document.createElement('select');select.dataset.key=key;select.style.width='100%';select.add(new Option('Selecione o CR e a diretoria correspondentes',''));
+   movCandidates.forEach((r,i)=>select.add(new Option(`${r.nomeCR||r.cr} · ${r.dir} · CR ${r.cr}`,String(i))));
+   select.addEventListener('change',()=>{movContext.p_request_id=crypto.randomUUID();prepareMappedMovements();});label.append(select);box.append(label);
+  }
+  document.getElementById('movPreview').textContent=`${rows.length} movimentação(ões) em ${monthLabel(month+'-01')}. ${revision?'Competência existente, revisão '+revision+'.':'Nova competência.'} Os outros meses serão preservados.`;
+  document.getElementById('movConfirmWrap').hidden=!(revision||!rows.length);
+  document.getElementById('movImportError').textContent=missing.length?'Selecione as correspondências para os centros de custo acima e confira as diretorias.':rows.length?'Confira a competência e confirme a importação.':'Arquivo sem registros: confirmar registra este mês sem movimentações.';
+  prepareMappedMovements();
+ }catch(err){if(session===sessionGeneration){resetMovementImport();document.getElementById('movImportError').textContent=err.message;}}
+ finally{movementBusy(false);}
+});
+document.getElementById('movCommit').addEventListener('click',async()=>{
+ if(movBusy||!movPending||currentUser?.role!=='admin')return;
+ const confirm=document.getElementById('movConfirm').checked;
+ if(!document.getElementById('movConfirmWrap').hidden&&!confirm){document.getElementById('movImportError').textContent='Marque a confirmação para salvar esta competência.';return;}
+ const session=sessionGeneration;movementBusy(true);
+ try{
+  const {data,error}=await sb.rpc('panel_movement_import',{...movPending,p_confirm_revision:confirm});
+  if(error)throw Error(error.message||'Falha ao salvar. Tente novamente.');
+  if(session!==sessionGeneration)return;
+  movPending=null;
+  const {data:bundle,error:loadError}=await sb.rpc('panel_history_bundle',{p_turnover:chosenTurnover||null,p_banco:chosenBanco||null});
+  if(loadError)throw Error('Importação salva. Entre novamente para atualizar a tela.');
+  if(session!==sessionGeneration)return;
+  applyHistory(bundle);buildFilterOptions();renderAll();movDialog.close();
+  document.getElementById('historyError').textContent=data.changed?'Movimentações salvas. Os outros meses foram preservados.':'Conteúdo já salvo. Nenhuma revisão duplicada.';
+ }catch(err){if(session===sessionGeneration)document.getElementById('movImportError').textContent=err.message;}
+ finally{movementBusy(false);}
+});
+
 let bankDataset=[];
 let historyCatalog=[];
 let chosenTurnover='';
@@ -744,7 +887,7 @@ const historyDialog=document.getElementById('historyImportDialog');
 const monthLabel=value=>value ? new Intl.DateTimeFormat('pt-BR',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(value+'T12:00:00Z')) : 'Sem competência';
 function historySource(){
   const rows=new Map();
-  [...dataset,...bankDataset].forEach(r=>rows.set([r.dir,r.area,r.cc,r.nomeCR,r.estagio].join('|'),r));
+  [...dataset,...bankDataset,...movsDataset.map(r=>({...r,cc:r.ccUnif}))].forEach(r=>rows.set([r.dir,r.area,r.cc,r.nomeCR,r.estagio].join('|'),r));
   return [...rows.values()];
 }
 function matchesFilters(d){return (!filters.dir||d.dir===filters.dir)&&(!filters.area||d.area===filters.area)&&(!filters.cc||d.cc===filters.cc)&&(!filters.nomeCR||d.nomeCR===filters.nomeCR)&&(!filters.estagio||d.estagio===filters.estagio);}
@@ -759,7 +902,7 @@ function applyHistory(data){
  historyCatalog=data.catalog||[];
  dataset=data.turnover?.rows||[];bankDataset=data.banco_horas?.rows||[];
  chosenTurnover=data.turnover?.competence||'';chosenBanco=data.banco_horas?.competence||'';
- movsDataset=data.extra?.movimentacoes||[];periodosDataset=data.extra?.periodos||[];sociosDataset=data.extra?.socios||[];
+ movsDataset=data.extra?.movimentacoes||[];syncMovementPeriods();periodosDataset=data.extra?.periodos||[];sociosDataset=data.extra?.socios||[];
  fillHistorySelect('historyTurnover','turnover',chosenTurnover);
  fillHistorySelect('historyBanco','banco_horas',chosenBanco);
  document.getElementById('turnoverPeriodNote').textContent='Turnover, quadro e tempo de casa: '+monthLabel(chosenTurnover)+' · revisão '+(data.turnover?.revision||'—');
@@ -795,36 +938,74 @@ function resetImportPreview(){
  document.getElementById('confirmRevisionWrap').hidden=true;document.getElementById('confirmRevision').checked=false;
  document.getElementById('importError').textContent='';
 }
+function syncImportMode(){
+ const mode=document.getElementById('importMode').value;
+ const turn=mode!=='banco_horas',bh=mode!=='turnover',extra=mode==='consolidado';
+ document.getElementById('turnoverImportField').hidden=!turn;
+ document.getElementById('bancoImportField').hidden=!bh;
+ document.getElementById('importTurnover').required=turn;
+ document.getElementById('importBanco').required=bh;
+ document.getElementById('importTurnover').disabled=importBusy||!turn;
+ document.getElementById('importBanco').disabled=importBusy||!bh;
+ document.getElementById('extrasImportField').hidden=!extra;
+ document.getElementById('extrasImportNote').hidden=!extra;
+ document.getElementById('importExtras').disabled=importBusy||!extra;
+ if(!extra)document.getElementById('importExtras').checked=false;
+}
+document.getElementById('importMode').addEventListener('change',()=>{resetImportPreview();syncImportMode();});
 document.getElementById('openHistoryImport').addEventListener('click',()=>{
  if(currentUser?.role!=='admin')return;
- document.getElementById('historyImportForm').reset();resetImportPreview();
- historyDialog.showModal();document.getElementById('importTurnover').focus();
+ document.getElementById('historyImportForm').reset();resetImportPreview();syncImportMode();
+ historyDialog.showModal();document.getElementById('importMode').focus();
 });
 document.getElementById('closeHistoryImport').addEventListener('click',()=>{if(!importBusy)historyDialog.close();});
 historyDialog.addEventListener('cancel',e=>{if(importBusy)e.preventDefault();});
-historyDialog.addEventListener('close',()=>{pendingImport=null;document.getElementById('historyImportForm').reset();});
+historyDialog.addEventListener('close',()=>{pendingImport=null;document.getElementById('historyImportForm').reset();syncImportMode();});
 for(const id of ['importTurnover','importBanco','historyFile','importExtras'])document.getElementById(id).addEventListener('change',resetImportPreview);
 function setImportBusy(value){
  importBusy=value;
- for(const id of ['importTurnover','importBanco','historyFile','importExtras','analyzeHistoryImport','closeHistoryImport','confirmRevision'])document.getElementById(id).disabled=value;
- document.getElementById('commitHistoryImport').disabled=value||!pendingImport;
+ for(const id of ['importMode','historyFile','analyzeHistoryImport','closeHistoryImport','confirmRevision'])document.getElementById(id).disabled=value;
+ syncImportMode();document.getElementById('commitHistoryImport').disabled=value||!pendingImport;
 }
-function parseIndicators(wb){
- const sheet=wb.Sheets['Indicadores'];if(!sheet)throw Error('Aba Indicadores não encontrada.');
+function parseSheetCompetence(value,wb){
+ if(typeof value==='number'){
+  const d=XLSX.SSF.parse_date_code(value,{date1904:!!wb.Workbook?.WBProps?.date1904});
+  if(d&&d.d===1&&d.y>=2000&&d.y<=2100)return `${d.y}-${String(d.m).padStart(2,'0')}`;
+ }
+ const s=String(value??'').trim();
+ if(/^(20\d{2}|2100)-(0[1-9]|1[0-2])(?:-01)?$/.test(s))return s.slice(0,7);
+ if(/^(0[1-9]|1[0-2])\/(20\d{2}|2100)$/.test(s))return s.slice(3)+'-'+s.slice(0,2);
+ throw Error('Competência inválida. Use o primeiro dia do mês como data, ou texto MM/AAAA.');
+}
+function parseIndicators(wb,mode='consolidado',expected={}){
+ const name=mode==='turnover'?'Turnover':mode==='banco_horas'?'Banco de Horas':'Indicadores';
+ const sheet=wb.Sheets[name]||(mode!=='consolidado'?wb.Sheets['Indicadores']:null);
+ if(!sheet)throw Error('Aba '+name+' não encontrada.');
+ const separate=sheet!==wb.Sheets['Indicadores'];
  const headers=XLSX.utils.sheet_to_json(sheet,{header:1,defval:null})[0]||[];
- const fields={dir:'Diretoria',area:'Áreas',cr:'CR',nomeCR:'Nome CR',cc:'CC Unificado',ativos:'Ativos',adm:'Admissões',resVol:'Rescisões Voluntárias',resInvol:'Rescisões Involuntárias',resTot:'Rescisões (Total)',turnGeral:'Turnover Geral',turnVol:'Turnover Voluntário',turnInvol:'Turnover Involuntário',bhPos:'BH + (horas)',contPos:'Cont. Pessoas +',bhNeg:'BH - (horas)',contNeg:'Cont. Pessoas -',tempo:'Tempo Médio de Casa (Anos)',estagio:'Estágios de cultura'};
- for(const header of Object.values(fields)){
+ const all={dir:'Diretoria',area:'Áreas',cr:'CR',nomeCR:'Nome CR',cc:'CC Unificado',ativos:'Ativos',adm:'Admissões',resVol:'Rescisões Voluntárias',resInvol:'Rescisões Involuntárias',resTot:'Rescisões (Total)',turnGeral:'Turnover Geral',turnVol:'Turnover Voluntário',turnInvol:'Turnover Involuntário',bhPos:'BH + (horas)',contPos:'Cont. Pessoas +',bhNeg:'BH - (horas)',contNeg:'Cont. Pessoas -',tempo:'Tempo Médio de Casa (Anos)',estagio:'Estágios de cultura'};
+ const dims=['dir','area','cr','nomeCR','cc','estagio'],bank=['bhPos','contPos','bhNeg','contNeg'];
+ const fields=Object.fromEntries(Object.entries(all).filter(([k])=>mode==='consolidado'||dims.includes(k)||(mode==='banco_horas'?bank.includes(k):!bank.includes(k))));
+ for(const header of [...Object.values(fields),...(separate||headers.includes('Competência')?['Competência']:[])]){
   if(!headers.includes(header))throw Error('Coluna obrigatória ausente: '+header);
   if(headers.filter(h=>h===header).length>1)throw Error('Cabeçalho duplicado: '+header);
  }
  const rows=XLSX.utils.sheet_to_json(sheet,{defval:null,blankrows:false});const keys=new Set();
- if(!rows.length)throw Error('A aba Indicadores está vazia.');
+ if(!rows.length)throw Error('A aba '+name+' está vazia.');
  if(rows.length>20000)throw Error('Limite de 20.000 linhas por importação.');
+ let filePeriod=null;
  return rows.map((r,index)=>{
+  if(headers.includes('Competência')){
+   const period=parseSheetCompetence(r['Competência'],wb);
+   if(filePeriod&&filePeriod!==period)throw Error('A planilha contém mais de uma competência. Importe um mês por vez.');
+   filePeriod=period;
+   const dates=mode==='consolidado'?[expected.turn,expected.bh]:[mode==='turnover'?expected.turn:expected.bh];
+   if(dates.some(d=>d&&d!==period))throw Error('A competência da planilha ('+period+') não corresponde ao mês selecionado.');
+  }
   const out={};
   for(const [key,label] of Object.entries(fields)){
    const value=r[label];
-   if(['dir','area','cr','nomeCR','cc','estagio'].includes(key)){
+   if(dims.includes(key)){
     if(['dir','cr'].includes(key)&&(value===null||String(value).trim()===''))throw Error('Linha '+(index+2)+': preencha '+label+'.');
     if(value!=null&&/[<>]/.test(String(value)))throw Error('Linha '+(index+2)+': texto inválido em '+label+'.');
     out[key]=key==='cr'&&typeof value==='number'?value:String(value??'').trim();
@@ -835,8 +1016,8 @@ function parseIndicators(wb){
     out[key]=value;
    }
   }
-  if(out.resTot!==out.resVol+out.resInvol)throw Error('Linha '+(index+2)+': total de rescisões não confere.');
-  const key=out.dir.toUpperCase()+'|'+String(out.cr).toUpperCase();
+  if(mode!=='banco_horas'&&out.resTot!==out.resVol+out.resInvol)throw Error('Linha '+(index+2)+': total de rescisões não confere.');
+  const key=JSON.stringify([out.dir.toUpperCase(),String(out.cr).toUpperCase()]);
   if(keys.has(key))throw Error('Linha '+(index+2)+': CR repetido na mesma diretoria.');keys.add(key);
   return out;
  });
@@ -848,28 +1029,30 @@ document.getElementById('historyImportForm').addEventListener('submit',async e=>
  try{
   const file=document.getElementById('historyFile').files[0];
   if(!file||!file.name.toLowerCase().endsWith('.xlsx'))throw Error('Selecione uma planilha .xlsx.');
-  const turn=document.getElementById('importTurnover').value,bh=document.getElementById('importBanco').value;
-  if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(turn)||!/^\d{4}-(0[1-9]|1[0-2])$/.test(bh))throw Error('Informe as duas competências.');
+  const mode=document.getElementById('importMode').value;
+  const turn=mode==='banco_horas'?null:document.getElementById('importTurnover').value;
+  const bh=mode==='turnover'?null:document.getElementById('importBanco').value;
+  for(const month of [turn,bh].filter(x=>x!==null))if(!/^(20\d{2}|2100)-(0[1-9]|1[0-2])$/.test(month))throw Error('Informe a competência de cada indicador selecionado.');
   const wb=XLSX.read(await file.arrayBuffer(),{type:'array'});
-  const rows=parseIndicators(wb);
-  const extras=document.getElementById('importExtras').checked?parseExtraSheets(wb,rows):{};
-  const {data,error}=await sb.rpc('panel_history_bundle',{p_turnover:turn+'-01',p_banco:bh+'-01'});
-  if(error)throw Error('Não foi possível consultar o histórico. Confira se o novo SQL já foi executado.');
+  const rows=parseIndicators(wb,mode,{turn,bh});
+  const extras=mode==='consolidado'&&document.getElementById('importExtras').checked?parseExtraSheets(wb,rows):{};
+  const {data,error}=await sb.rpc('panel_history_bundle',{p_turnover:turn?turn+'-01':null,p_banco:bh?bh+'-01':null});
+  if(error)throw Error('Não foi possível consultar o histórico. Confira sua conexão e a configuração do painel.');
   if(session!==sessionGeneration||!historyDialog.open)return;
-  pendingImport={p_request_id:crypto.randomUUID(),p_source_name:file.name,p_turnover:turn+'-01',p_banco:bh+'-01',p_rows:rows,p_extra:extras,p_expected_turnover:data.turnover?.revision||0,p_expected_banco:data.banco_horas?.revision||0};
-  const summary=document.getElementById('importPreview');
-  for(const text of [file.name,rows.length+' linhas validadas.',
-   'Turnover: '+monthLabel(turn+'-01')+' — '+(data.turnover?'período existente, '+data.turnover.rows.length+' linhas na revisão '+data.turnover.revision:'novo período')+'.',
-   'Banco de horas: '+monthLabel(bh+'-01')+' — '+(data.banco_horas?'período existente, '+data.banco_horas.rows.length+' linhas na revisão '+data.banco_horas.revision:'novo período')+'.',
-   'Os demais meses serão preservados. Reenvios iguais não criam nova revisão.',
-   Object.keys(extras).length?'As abas adicionais presentes serão atualizadas, com cópia da versão anterior.':'Movimentações e avaliações serão mantidas sem alteração.']){
-    const p=document.createElement('p');p.textContent=text;summary.append(p);
+  pendingImport={p_request_id:crypto.randomUUID(),p_source_name:file.name,p_turnover:turn?turn+'-01':null,p_banco:bh?bh+'-01':null,p_turnover_rows:turn?rows:null,p_banco_rows:bh?rows:null,p_extra:extras,p_expected_turnover:turn?(data.turnover?.revision||0):null,p_expected_banco:bh?(data.banco_horas?.revision||0):null};
+  const texts=[file.name,rows.length+' linhas validadas.'];
+  for(const [label,date,existing] of [['Turnover',turn,data.turnover],['Banco de horas',bh,data.banco_horas]]){
+   texts.push(date?label+': '+monthLabel(date+'-01')+' — '+(existing?'período existente, '+existing.rows.length+' linhas na revisão '+existing.revision:'novo período')+'.':label+': sem alteração.');
   }
-  document.getElementById('confirmRevisionWrap').hidden=!(data.turnover||data.banco_horas);
+  texts.push('Os demais meses serão preservados. Reenvios iguais não criam nova revisão.',Object.keys(extras).length?'As abas adicionais presentes serão atualizadas, com cópia da versão anterior.':'Movimentações e avaliações serão mantidas sem alteração.');
+  const summary=document.getElementById('importPreview');
+  for(const text of texts){const p=document.createElement('p');p.textContent=text;summary.append(p);}
+  document.getElementById('confirmRevisionWrap').hidden=!((turn&&data.turnover)||(bh&&data.banco_horas));
   message.textContent='Confira as competências e a quantidade de linhas antes de confirmar.';
  }catch(err){message.textContent=err.message;pendingImport=null;}
  finally{setImportBusy(false);}
 });
+
 document.getElementById('commitHistoryImport').addEventListener('click',async()=>{
  if(importBusy||!pendingImport||currentUser?.role!=='admin')return;
  const confirm=document.getElementById('confirmRevision').checked;
@@ -878,7 +1061,7 @@ document.getElementById('commitHistoryImport').addEventListener('click',async()=
  const session=sessionGeneration;setImportBusy(true);message.textContent='Salvando a importação…';
  let committed=false;
  try{
-  const {data,error}=await sb.rpc('panel_history_import',{...pendingImport,p_confirm_revision:confirm});
+  const {data,error}=await sb.rpc('panel_history_import_separate',{...pendingImport,p_confirm_revision:confirm});
   if(error)throw Error(error.message||'Não foi possível salvar. Você pode tentar novamente.');
   committed=true;
   if(session!==sessionGeneration)return;
@@ -888,7 +1071,7 @@ document.getElementById('commitHistoryImport').addEventListener('click',async()=
   if(session!==sessionGeneration)return;
   applyHistory(bundle);filters={dir:'',area:'',cc:'',nomeCR:'',estagio:''};
   buildFilterOptions();buildSocioOptions();renderAll();historyDialog.close();
-  document.getElementById('historyError').textContent=(data.turnover.changed||data.banco_horas.changed||data.extrasChanged)?'Importação salva. Exibindo as competências mais recentes.':'Esse conteúdo já estava salvo. Nenhuma revisão foi duplicada.';
+  document.getElementById('historyError').textContent=(data.turnover?.changed||data.banco_horas?.changed||data.extrasChanged)?'Importação salva. Exibindo as competências mais recentes.':'Esse conteúdo já estava salvo. Nenhuma revisão foi duplicada.';
  }catch(err){if(session===sessionGeneration)message.textContent=err.message;}
  finally{setImportBusy(false);if(committed)document.getElementById('commitHistoryImport').disabled=true;}
 });
@@ -909,6 +1092,7 @@ function loginMessage(message){
   box.style.display = message ? 'block' : 'none';
 }
 function clearPanel(){
+ movDialog.close();resetMovementImport();document.getElementById('movFrom').replaceChildren();document.getElementById('movTo').replaceChildren();
   sessionGeneration++;
   currentUser = null;
   dataset=[];bankDataset=[];historyCatalog=[];chosenTurnover='';chosenBanco='';historyRequest++;pendingImport=null;movsDataset=[];periodosDataset=[];sociosDataset=[];
@@ -1044,7 +1228,7 @@ function startApp(){
   const uploadBoxEl = document.getElementById('uploadBox');
   if(uploadBoxEl) uploadBoxEl.style.display = currentUser.role === 'admin' ? 'block' : 'none';
   document.getElementById('adminTools').style.display = currentUser.role === 'admin' ? 'block' : 'none';
-  document.getElementById('openHistoryImport').hidden=currentUser.role!=='admin';
+  document.getElementById('openHistoryImport').hidden=currentUser.role!=='admin';document.getElementById('openMovementImport').hidden=currentUser.role!=='admin';
   document.getElementById('fDiretoria').disabled = currentUser.role === 'diretor';
 
   const rowCountEl = document.getElementById('rowCount');
@@ -1059,35 +1243,6 @@ function parseExtraSheets(wb,mapped){
        const lookup = {};
       mapped.forEach(d => { if(d.nomeCR) lookup[normCC(d.nomeCR)] = {dir:d.dir, area:d.area, ccUnif:d.cc, nomeCR:d.nomeCR}; });
       const MANUAL_FALLBACK = { [normCC('MARKETING SO')]: {dir:'Lucas Damando', area:'COMERCIAL', ccUnif:'MARKETING', nomeCR:'MARKETING SO'} };
-
-      const movSheet = wb.Sheets['Movimentacoes'];
-      if(movSheet){
-        try{
-          const mh=XLSX.utils.sheet_to_json(movSheet,{header:1})[0]||[];
-          for(const key of ['NOME DO COLABORADOR','Centro de custo atual','SALÁRIO ATUAL','SALÁRIO PROPOSTO','DATA DA MUDANÇA'])if(!mh.includes(key))throw Error('Coluna ausente: '+key);
-          const mrows = XLSX.utils.sheet_to_json(movSheet, {defval:null});
-          movsDataset = mrows.filter(r=>r['NOME DO COLABORADOR']).map(r=>{
-            const ccraw = r['Centro de custo atual'];
-            const info = lookup[normCC(ccraw)] || MANUAL_FALLBACK[normCC(ccraw)] || {};
-            const atual = Number(r['SALÁRIO ATUAL'])||0;
-            const proposto = Number(r['SALÁRIO PROPOSTO'])||0;
-            const pct = atual ? (proposto-atual)/atual : null;
-            let dataStr = null;
-            const dv = r['DATA DA MUDANÇA'];
-            if(dv instanceof Date) dataStr = dv.toISOString().slice(0,10);
-            else if(typeof dv === 'number') dataStr = XLSX.SSF.format('yyyy-mm-dd', dv);
-            else if(dv) dataStr = String(dv);
-            const mes = Number(r['Mês']) || null;
-            return {
-              nome: r['NOME DO COLABORADOR'], empresaDe: r['EMPRESA DE'], empresaPara: r['EMPRESA PARA'],
-              tipo: r['TIPO DE MOVIMENTAÇÃO'], centroCusto: ccraw, cargoAtual: r['CARGO ATUAL'], cargoProposto: r['CARGO PROPOSTO'],
-              salAtual: atual, salProposto: proposto, pct, data: dataStr, motivo: r['ATUAL MOTIVO'] || r['MOTIVO'] || 'Não informado',
-              gestorAtual: r['Gestor Atual'], mes, mesNome: MES_ORDER[(mes||1)-1] || String(mes||''),
-              dir: info.dir || null, area: info.area || null, ccUnif: info.ccUnif || null, nomeCR: info.nomeCR || ccraw
-            };
-          });
-        }catch(err){ throw Error('Movimentações: '+err.message); }
-      }
 
       const avSheet = wb.Sheets['Avaliacao de Socios'] || wb.Sheets['Avaliação de Sócios'];
       if(avSheet){
@@ -1542,7 +1697,9 @@ function renderBanco(rows){
 
 // ==================== MOVIMENTAÇÕES ====================
 function getFilteredMovs(){
+  const from=document.getElementById('movFrom').value.slice(0,7),to=document.getElementById('movTo').value.slice(0,7);
   return movsDataset.filter(d =>
+    (!from||String(d.data).slice(0,7)>=from)&&(!to||String(d.data).slice(0,7)<=to)&&
     (!filters.dir || d.dir === filters.dir) &&
     (!filters.area || d.area === filters.area) &&
     (!filters.cc || d.ccUnif === filters.cc) &&
@@ -1558,6 +1715,8 @@ function fmtMoney(n){
 const MES_ORDER = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
 function renderMovs(){
+  const a=document.getElementById('movFrom').value,b=document.getElementById('movTo').value;
+  document.getElementById('movPeriodNote').textContent=a>b?'O início deve ser anterior ou igual ao fim.':a?'Movimentações: '+monthLabel(a)+' a '+monthLabel(b)+'. Para consultar um mês, selecione o mesmo início e fim.':'Nenhuma competência de movimentações cadastrada.';
   const rows = getFilteredMovs();
 
   const total = rows.length;
@@ -1576,8 +1735,8 @@ function renderMovs(){
 
   // ---- Movimentações por mês ----
   const byMes = {};
-  rows.forEach(d=>{ byMes[d.mesNome] = (byMes[d.mesNome]||0) + 1; });
-  const mesLabels = MES_ORDER.filter(m => byMes[m]);
+  rows.forEach(d=>{ const m=String(d.data||'').slice(0,7);byMes[m]=(byMes[m]||0)+1; });
+  const mesLabels = Object.keys(byMes).sort();
   const mesVals = mesLabels.map(m=>byMes[m]);
 
   if(charts.movMes){ try{ charts.movMes.destroy(); }catch(e){} }
