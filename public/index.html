@@ -438,6 +438,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 #historyImportDialog [hidden]{display:none!important}
 #importMode{width:100%;padding:12px;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:8px;font:inherit}
 #movImportDialog{width:min(720px,92vw);max-height:90vh;overflow:auto;background:var(--panel);color:var(--text);border:1px solid #d4a24a;border-radius:18px;padding:28px}#movImportDialog::backdrop{background:rgba(0,0,0,.65);backdrop-filter:blur(4px)}#movImportDialog [hidden],#openMovementImport[hidden]{display:none!important}#movImportDialog select,#movFrom,#movTo{padding:10px;background:#281014;color:#fff;border:1px solid #71414a;border-radius:8px;font:inherit}#movImportDialog .login-btn{margin-top:12px}.history-bar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:12px 0}.history-bar .link-btn{width:auto;margin:0}#movImportDialog button:disabled{opacity:.5;cursor:not-allowed}.history-bar label{display:flex;gap:8px;align-items:center}#openMovementImport{width:auto;padding:12px 18px}
+.monthly-controls{margin-top:12px}.monthly-controls label,#tabMovs .history-bar label{font-size:11px;letter-spacing:.6px;font-weight:700;color:var(--muted);display:flex;flex-direction:column;align-items:flex-start;gap:8px}.monthly-controls select,#movMonthFilter{min-width:220px}#tabMovs .history-bar{padding:18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;align-items:flex-end}#openMovementImport{margin-left:auto}#movMonthFilter{font-size:14px;font-weight:400;letter-spacing:normal;padding:12px;background:#281014;color:#fff;border:1px solid #71414a;border-radius:8px}.history-import-actions{display:flex;justify-content:flex-end;margin:12px 0}.history-import-actions button{width:auto}.history-import-actions:has(button[hidden]){display:none}
 </style>
 </head>
 <body>
@@ -554,9 +555,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       <p>Acompanhe turnover, banco de horas e tempo de casa por diretoria, área e centro de custo.</p>
     </div>
 
-    <div class="history-controls">
- <div><label for="historyTurnover">Turnover / quadro / tempo de casa</label><select id="historyTurnover"></select></div>
- <div><label for="historyBanco">Banco de horas</label><select id="historyBanco"></select></div>
+    <div class="history-import-actions">
+
  <button type="button" id="openHistoryImport" class="change-pass-btn" hidden>Importar planilha</button>
 </div>
 <p id="historyError" class="history-warning" role="status"></p>
@@ -571,7 +571,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     <div class="chips-row" id="chipsRow" style="display:none;"></div>
 
     <!-- TAB 1 -->
-    <div id="tabAtivos"><p id="turnoverPeriodNote" class="history-note"></p>
+    <div id="tabAtivos"><div class="history-controls monthly-controls"><div><label for="historyTurnover">MÊS DO TURNOVER</label><select id="historyTurnover"></select></div></div><p id="turnoverPeriodNote" class="history-note"></p>
       <div class="kpi-row">
         <div class="kpi-card"><div class="lbl">ATIVOS</div><div class="val" id="kpiAtivos">0</div></div>
         <div class="kpi-card"><div class="lbl">ADMISSÕES</div><div class="val" id="kpiAdm">0</div><span class="sub neutral">entradas</span></div>
@@ -602,7 +602,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </div>
 
     <!-- TAB 2 -->
-    <div id="tabBanco" style="display:none;"><p id="bancoPeriodNote" class="history-note"></p>
+    <div id="tabBanco" style="display:none;"><div class="history-controls monthly-controls"><div><label for="historyBanco">MÊS DO BANCO DE HORAS</label><select id="historyBanco"></select></div></div><p id="bancoPeriodNote" class="history-note"></p>
       <div class="kpi-row" style="grid-template-columns:repeat(4,1fr);">
         <div class="kpi-card"><div class="lbl">BH + (HORAS)</div><div class="val" id="kpiBhPos">0</div><span class="sub ok">saldo positivo</span></div>
         <div class="kpi-card"><div class="lbl">PESSOAS COM BH +</div><div class="val" id="kpiPessoasPos">0</div></div>
@@ -640,7 +640,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </div>
 
     <!-- TAB 3: MOVIMENTAÇÕES -->
-    <div id="tabMovs" style="display:none;"><div class="history-bar"><label>DE <select id="movFrom"></select></label><label>ATÉ <select id="movTo"></select></label><button id="movAll" type="button" class="link-btn">Todo o histórico</button><button id="openMovementImport" type="button" class="login-btn" hidden>Importar movimentações</button></div><p id="movPeriodNote" class="history-note"></p>
+    <div id="tabMovs" style="display:none;"><div class="history-bar"><label for="movMonthFilter">MÊS DAS MOVIMENTAÇÕES <select id="movMonthFilter"></select></label><button id="openMovementImport" type="button" class="login-btn" hidden>Importar movimentações</button></div><p id="movPeriodNote" class="history-note"></p>
       <div class="kpi-row" style="grid-template-columns:repeat(5,1fr);">
         <div class="kpi-card"><div class="lbl">MOVIMENTAÇÕES</div><div class="val" id="kpiMovTotal">0</div></div>
         <div class="kpi-card"><div class="lbl">PROMOÇÕES</div><div class="val" id="kpiMovProm">0</div></div>
@@ -742,18 +742,13 @@ let charts = {};
 let movPending=null,movBusy=false,movCandidates=[],movParsed=[],movContext=null;
 const movDialog=document.getElementById('movImportDialog');
 function syncMovementPeriods(){
- const months=historyCatalog.filter(x=>x.indicator==='movimentacoes').map(x=>x.competence).sort();
- for(const id of ['movFrom','movTo']){
-  const el=document.getElementById(id),previous=el.value;el.replaceChildren();
-  months.forEach(m=>el.add(new Option(monthLabel(m),m)));
-  el.value=months.includes(previous)?previous:(id==='movFrom'?months[0]:months.at(-1))||'';
- }
+ const months=historyCatalog.filter(x=>x.indicator==='movimentacoes').map(x=>x.competence).sort().reverse();
+ const el=document.getElementById('movMonthFilter'),previous=el.value;el.replaceChildren();
+ months.forEach(m=>el.add(new Option(monthLabel(m),m)));
+ if(!months.length)el.add(new Option('Nenhum mês importado',''));
+ el.value=months.includes(previous)?previous:months[0]||'';el.disabled=!months.length;
 }
-for(const id of ['movFrom','movTo'])document.getElementById(id).addEventListener('change',()=>{movMotivoFilter='';renderMovs();});
-document.getElementById('movAll').addEventListener('click',()=>{
- const from=document.getElementById('movFrom'),to=document.getElementById('movTo');
- from.selectedIndex=0;to.selectedIndex=to.options.length-1;movMotivoFilter='';renderMovs();
-});
+document.getElementById('movMonthFilter').addEventListener('change',()=>{movMotivoFilter='';renderMovs();});
 function resetMovementImport(){
  movPending=null;movContext=null;movParsed=[];movCandidates=[];
  document.getElementById('movPreview').replaceChildren();document.getElementById('movMappings').replaceChildren();
@@ -870,7 +865,7 @@ document.getElementById('movCommit').addEventListener('click',async()=>{
   const {data:bundle,error:loadError}=await sb.rpc('panel_history_bundle',{p_turnover:chosenTurnover||null,p_banco:chosenBanco||null});
   if(loadError)throw Error('Importação salva. Entre novamente para atualizar a tela.');
   if(session!==sessionGeneration)return;
-  applyHistory(bundle);buildFilterOptions();renderAll();movDialog.close();
+  applyHistory(bundle);document.getElementById('movMonthFilter').value=data.competence;buildFilterOptions();renderAll();movDialog.close();
   document.getElementById('historyError').textContent=data.changed?'Movimentações salvas. Os outros meses foram preservados.':'Conteúdo já salvo. Nenhuma revisão duplicada.';
  }catch(err){if(session===sessionGeneration)document.getElementById('movImportError').textContent=err.message;}
  finally{movementBusy(false);}
@@ -894,7 +889,7 @@ function matchesFilters(d){return (!filters.dir||d.dir===filters.dir)&&(!filters
 function fillHistorySelect(id,kind,value){
  const el=document.getElementById(id);el.replaceChildren();
  for(const item of historyCatalog.filter(r=>r.indicator===kind)){
-  el.add(new Option(monthLabel(item.competence)+' · revisão '+item.revision,item.competence));
+  el.add(new Option(monthLabel(item.competence),item.competence));
  }
  el.value=value||'';
 }
@@ -1092,7 +1087,7 @@ function loginMessage(message){
   box.style.display = message ? 'block' : 'none';
 }
 function clearPanel(){
- movDialog.close();resetMovementImport();document.getElementById('movFrom').replaceChildren();document.getElementById('movTo').replaceChildren();
+ movDialog.close();resetMovementImport();document.getElementById('movMonthFilter').replaceChildren();
   sessionGeneration++;
   currentUser = null;
   dataset=[];bankDataset=[];historyCatalog=[];chosenTurnover='';chosenBanco='';historyRequest++;pendingImport=null;movsDataset=[];periodosDataset=[];sociosDataset=[];
@@ -1697,9 +1692,9 @@ function renderBanco(rows){
 
 // ==================== MOVIMENTAÇÕES ====================
 function getFilteredMovs(){
-  const from=document.getElementById('movFrom').value.slice(0,7),to=document.getElementById('movTo').value.slice(0,7);
+  const month=document.getElementById('movMonthFilter').value.slice(0,7);
   return movsDataset.filter(d =>
-    (!from||String(d.data).slice(0,7)>=from)&&(!to||String(d.data).slice(0,7)<=to)&&
+    (month&&String(d.data).slice(0,7)===month)&&
     (!filters.dir || d.dir === filters.dir) &&
     (!filters.area || d.area === filters.area) &&
     (!filters.cc || d.ccUnif === filters.cc) &&
@@ -1715,8 +1710,8 @@ function fmtMoney(n){
 const MES_ORDER = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
 function renderMovs(){
-  const a=document.getElementById('movFrom').value,b=document.getElementById('movTo').value;
-  document.getElementById('movPeriodNote').textContent=a>b?'O início deve ser anterior ou igual ao fim.':a?'Movimentações: '+monthLabel(a)+' a '+monthLabel(b)+'. Para consultar um mês, selecione o mesmo início e fim.':'Nenhuma competência de movimentações cadastrada.';
+  const month=document.getElementById('movMonthFilter').value;
+  document.getElementById('movPeriodNote').textContent=month?'Movimentações de '+monthLabel(month)+'.':'Nenhuma competência de movimentações cadastrada.';
   const rows = getFilteredMovs();
 
   const total = rows.length;
