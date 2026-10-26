@@ -483,7 +483,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
  <h2 id="historyImportTitle">Importar planilha mensal</h2>
  <p class="history-warning">Informe o período real de cada indicador. A quantidade de linhas pode mudar; os meses anteriores serão preservados.</p>
  <form id="historyImportForm">
-  <div class="field"><label for="importMode">O QUE DESEJA IMPORTAR?</label><select id="importMode"><option value="consolidado">Base consolidada (turnover e banco de horas)</option><option value="turnover">Somente turnover</option><option value="banco_horas">Somente banco de horas</option></select></div>
+  <div class="field"><label for="importMode">O QUE DESEJA IMPORTAR?</label><select id="importMode"><option value="consolidado">Base consolidada (turnover e banco de horas)</option><option value="turnover">Somente turnover</option><option value="banco_horas">Somente banco de horas</option><option value="movimentacoes">Movimentações</option></select></div>
   <div class="field" id="turnoverImportField"><label for="importTurnover">COMPETÊNCIA DO TURNOVER</label><input id="importTurnover" type="month" min="2000-01" max="2100-12" required></div>
   <div class="field" id="bancoImportField"><label for="importBanco">COMPETÊNCIA DO BANCO DE HORAS</label><input id="importBanco" type="month" min="2000-01" max="2100-12" required></div>
   <div class="field"><label for="historyFile">PLANILHA EXCEL (.XLSX)</label><input id="historyFile" type="file" accept=".xlsx" required></div>
@@ -497,7 +497,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
  <button id="commitHistoryImport" type="button" class="login-btn" disabled>Confirmar importação</button>
  <button id="closeHistoryImport" type="button" class="link-btn">Fechar</button>
 </dialog>
-<dialog id="movImportDialog" aria-labelledby="movImportTitle"><h2 id="movImportTitle">Importar movimentações</h2><p class="history-note">Importe primeiro os indicadores do mês. Este envio atualiza somente a competência selecionada.</p><form id="movImportForm"><div class="field"><label for="movMonth">COMPETÊNCIA</label><input id="movMonth" type="month" min="2000-01" max="2100-12" required></div><div class="field"><label for="movFile">PLANILHA DE MOVIMENTAÇÕES (.XLSX)</label><input id="movFile" type="file" accept=".xlsx" required></div><button id="movAnalyze" class="login-btn" type="submit">Analisar movimentações</button></form><p id="movPreview"></p><div id="movMappings"></div><label id="movConfirmWrap" hidden><input id="movConfirm" type="checkbox"> Confirmo o conteúdo completo deste mês, inclusive a substituição da revisão atual ou a ausência de movimentações.</label><p id="movImportError" role="status" class="history-warning"></p><button id="movCommit" class="login-btn" type="button" disabled>Confirmar importação</button><button id="movClose" class="link-btn" type="button">Fechar</button></dialog>
+<dialog id="movImportDialog" aria-labelledby="movImportTitle"><h2 id="movImportTitle">Importar planilha mensal</h2><div class="field"><label for="movementImportMode">O QUE DESEJA IMPORTAR?</label><select id="movementImportMode" style="width:100%"><option value="consolidado">Base consolidada (turnover e banco de horas)</option><option value="turnover">Somente turnover</option><option value="banco_horas">Somente banco de horas</option><option value="movimentacoes">Movimentações</option></select></div><p class="history-note">Importe primeiro os indicadores do mês. Este envio atualiza somente a competência selecionada.</p><form id="movImportForm"><div class="field"><label for="movMonth">COMPETÊNCIA</label><input id="movMonth" type="month" min="2000-01" max="2100-12" required></div><div class="field"><label for="movFile">PLANILHA DE MOVIMENTAÇÕES (.XLSX)</label><input id="movFile" type="file" accept=".xlsx" required></div><button id="movAnalyze" class="login-btn" type="submit">Analisar movimentações</button></form><p id="movPreview"></p><div id="movMappings"></div><label id="movConfirmWrap" hidden><input id="movConfirm" type="checkbox"> Confirmo o conteúdo completo deste mês, inclusive a substituição da revisão atual ou a ausência de movimentações.</label><p id="movImportError" role="status" class="history-warning"></p><button id="movCommit" class="login-btn" type="button" disabled>Confirmar importação</button><button id="movClose" class="link-btn" type="button">Fechar</button></dialog>
 <!-- ============ APP ============ -->
 <div id="app">
 <div class="shell">
@@ -640,7 +640,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </div>
 
     <!-- TAB 3: MOVIMENTAÇÕES -->
-    <div id="tabMovs" style="display:none;"><div class="history-bar"><label for="movMonthFilter">MÊS DAS MOVIMENTAÇÕES <select id="movMonthFilter"></select></label><button id="openMovementImport" type="button" class="login-btn" hidden>Importar movimentações</button></div><p id="movPeriodNote" class="history-note"></p>
+    <div id="tabMovs" style="display:none;"><div class="history-bar"><label for="movMonthFilter">MÊS DAS MOVIMENTAÇÕES <select id="movMonthFilter"></select></label></div><p id="movPeriodNote" class="history-note"></p>
       <div class="kpi-row" style="grid-template-columns:repeat(5,1fr);">
         <div class="kpi-card"><div class="lbl">MOVIMENTAÇÕES</div><div class="val" id="kpiMovTotal">0</div></div>
         <div class="kpi-card"><div class="lbl">PROMOÇÕES</div><div class="val" id="kpiMovProm">0</div></div>
@@ -759,9 +759,16 @@ function movementBusy(value){
  movBusy=value;for(const el of movDialog.querySelectorAll('input,select,button'))el.disabled=value;
  document.getElementById('movCommit').disabled=value||!movPending;
 }
-document.getElementById('openMovementImport').addEventListener('click',()=>{
+function openMovementImport(){
  if(currentUser?.role!=='admin')return;
- document.getElementById('movImportForm').reset();resetMovementImport();movDialog.showModal();
+ document.getElementById('movImportForm').reset();resetMovementImport();
+ document.getElementById('movementImportMode').value='movimentacoes';
+ movDialog.showModal();document.getElementById('movementImportMode').focus();
+}
+document.getElementById('movementImportMode').addEventListener('change',e=>{
+ if(movBusy)return;const mode=e.target.value;movDialog.close();
+ document.getElementById('historyImportForm').reset();document.getElementById('importMode').value=mode;
+ resetImportPreview();syncImportMode();historyDialog.showModal();document.getElementById('importMode').focus();
 });
 document.getElementById('movClose').addEventListener('click',()=>{if(!movBusy)movDialog.close();});
 movDialog.addEventListener('cancel',e=>{if(movBusy)e.preventDefault();});
@@ -947,7 +954,11 @@ function syncImportMode(){
  document.getElementById('importExtras').disabled=importBusy||!extra;
  if(!extra)document.getElementById('importExtras').checked=false;
 }
-document.getElementById('importMode').addEventListener('change',()=>{resetImportPreview();syncImportMode();});
+document.getElementById('importMode').addEventListener('change',()=>{
+ resetImportPreview();
+ if(document.getElementById('importMode').value==='movimentacoes'){historyDialog.close();openMovementImport();return;}
+ syncImportMode();
+});
 document.getElementById('openHistoryImport').addEventListener('click',()=>{
  if(currentUser?.role!=='admin')return;
  document.getElementById('historyImportForm').reset();resetImportPreview();syncImportMode();
@@ -1223,7 +1234,7 @@ function startApp(){
   const uploadBoxEl = document.getElementById('uploadBox');
   if(uploadBoxEl) uploadBoxEl.style.display = currentUser.role === 'admin' ? 'block' : 'none';
   document.getElementById('adminTools').style.display = currentUser.role === 'admin' ? 'block' : 'none';
-  document.getElementById('openHistoryImport').hidden=currentUser.role!=='admin';document.getElementById('openMovementImport').hidden=currentUser.role!=='admin';
+  document.getElementById('openHistoryImport').hidden=currentUser.role!=='admin';
   document.getElementById('fDiretoria').disabled = currentUser.role === 'diretor';
 
   const rowCountEl = document.getElementById('rowCount');
