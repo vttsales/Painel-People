@@ -439,6 +439,9 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 #importMode{width:100%;padding:12px;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:8px;font:inherit}
 #movImportDialog{width:min(720px,92vw);max-height:90vh;overflow:auto;background:var(--panel);color:var(--text);border:1px solid #d4a24a;border-radius:18px;padding:28px}#movImportDialog::backdrop{background:rgba(0,0,0,.65);backdrop-filter:blur(4px)}#movImportDialog [hidden],#openMovementImport[hidden]{display:none!important}#movImportDialog select,#movFrom,#movTo{padding:10px;background:#281014;color:#fff;border:1px solid #71414a;border-radius:8px;font:inherit}#movImportDialog .login-btn{margin-top:12px}.history-bar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:12px 0}.history-bar .link-btn{width:auto;margin:0}#movImportDialog button:disabled{opacity:.5;cursor:not-allowed}.history-bar label{display:flex;gap:8px;align-items:center}#openMovementImport{width:auto;padding:12px 18px}
 .monthly-controls{margin-top:12px}.monthly-controls label,#tabMovs .history-bar label{font-size:11px;letter-spacing:.6px;font-weight:700;color:var(--muted);display:flex;flex-direction:column;align-items:flex-start;gap:8px}.monthly-controls select,#movMonthFilter{min-width:220px}#tabMovs .history-bar{padding:18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;align-items:flex-end}#openMovementImport{margin-left:auto}#movMonthFilter{font-size:14px;font-weight:400;letter-spacing:normal;padding:12px;background:#281014;color:#fff;border:1px solid #71414a;border-radius:8px}.history-import-actions{display:flex;justify-content:flex-end;margin:12px 0}.history-import-actions button{width:auto}.history-import-actions:has(button[hidden]){display:none}
+
+.bank-detail-section{margin-top:24px}.bank-tree-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.bank-tree-grid .panel{min-width:0}.bank-tree{display:flex;align-items:flex-start;gap:20px;overflow:auto;height:360px;padding:16px 2px}.bank-tree-column{flex:1;min-width:140px;position:relative}.bank-tree-column:not(:first-child){border-left:1px solid #805455;padding-left:14px}.bank-tree-heading{font-size:10px;letter-spacing:1px;color:var(--muted);margin-bottom:12px}.bank-tree-node{position:relative;display:block;text-align:left;width:100%;padding:10px 8px 14px;margin:0 0 12px;border:1px solid transparent;border-radius:7px;background:#281014;color:var(--text);cursor:pointer;font:inherit;min-height:70px}.bank-tree-node:focus-visible{outline:2px solid var(--gold)}.bank-tree-node span{display:block;font-size:11px;overflow-wrap:anywhere}.bank-tree-node strong{display:block;margin-top:6px;font-size:12px}.bank-tree-node i{position:absolute;left:0;bottom:0;height:4px;background:#4caf7d;border-radius:4px}.negative .bank-tree-node i{background:#e0637a}.bank-tree-node.selected{border-color:var(--gold);background:#51272b}.bank-tree-column:not(:first-child) .bank-tree-node:before{content:'';position:absolute;width:14px;left:-15px;top:50%;border-top:1px solid #805455}.bank-tree-tip{font-size:12px;color:var(--muted);min-width:130px;flex:1;padding-top:50px}.bank-detail-toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.bank-detail-toolbar .link-btn{width:auto;display:inline-block;margin:0 8px 0 0}.bank-people-panel{margin-top:18px}.bank-detail-toolbar label{font-size:11px;color:var(--muted)}#bankPeopleSearch,.bank-map-label select{display:block;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);font:inherit;min-width:240px;margin-top:6px}.bank-map-label{display:block;margin:16px 0;font-size:13px}.bank-map-label select{width:100%}.bank-people-scroll{overflow:auto;max-height:500px;margin:16px 0}.bank-people-scroll table{width:100%;border-collapse:collapse;font-size:12px}.bank-people-scroll th{text-align:left;font-size:10px;color:var(--muted);white-space:nowrap;position:sticky;top:0;background:var(--panel)}.bank-people-scroll td,.bank-people-scroll th{padding:12px 10px;border-bottom:1px solid var(--line)}.bank-people-scroll .bank-number{text-align:right;white-space:nowrap}#bankPeopleCount{font-size:12px;color:var(--muted)}#bankPeopleStatus{margin-top:14px}.bank-detail-section button:disabled{opacity:.45;cursor:default}@media(max-width:1100px){.bank-tree-grid{grid-template-columns:1fr}}@media(max-width:600px){.bank-tree{height:330px}.bank-detail-toolbar label,#bankPeopleSearch{width:100%;min-width:0}}
+.bank-tree-column:first-child .bank-tree-node:after,.bank-tree-column:not(:last-child) .bank-tree-node.selected:after{content:'';position:absolute;right:-21px;top:50%;width:20px;border-top:1px solid #805455}@media(max-width:700px){.shell{flex-direction:column}.sidebar{width:100%;flex:0 0 auto;max-height:28vh;padding:12px 16px;gap:12px;border-right:0;border-bottom:1px solid var(--line)}.main{min-height:0;padding:18px 14px}.tabs{flex-wrap:wrap}.tab-btn{padding:10px 12px}#tabBanco .panels{grid-template-columns:1fr!important}#tabBanco .kpi-row{grid-template-columns:repeat(2,minmax(0,1fr))!important}.bank-tree-grid .panel,.bank-people-panel{padding:16px}.bank-tree-node{font-size:12px}}
 </style>
 </head>
 <body>
@@ -491,7 +494,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   <p id="extrasImportNote" class="history-note">As abas adicionais mantêm seus próprios períodos. Sem marcar esta opção, seus dados atuais serão preservados.</p>
   <button id="analyzeHistoryImport" type="submit" class="login-btn">Analisar planilha</button>
  </form>
- <div id="importPreview" aria-live="polite"></div>
+ <div id="importPreview" aria-live="polite"></div><div id="bankImportMappings"></div><p id="bankImportNote" class="history-warning" aria-live="polite"></p>
  <label id="confirmRevisionWrap" hidden style="display:block;font-size:13px;margin:16px 0"><input id="confirmRevision" type="checkbox"> Confirmo a revisão dos períodos existentes caso os dados tenham mudado.</label>
  <p id="importError" role="status" class="history-warning"></p>
  <button id="commitHistoryImport" type="button" class="login-btn" disabled>Confirmar importação</button>
@@ -637,6 +640,19 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
           </div>
         </div>
       </div>
+
+ <div class="bank-detail-section">
+  <div class="bank-detail-toolbar"><div><h3>Distribuição do banco de horas</h3><p id="bankTreePath" class="ph"></p></div><button id="bankTreeClear" class="link-btn" type="button">Limpar seleção da árvore</button></div>
+  <div class="bank-tree-grid">
+   <section class="panel"><h3>Horas positivas</h3><p class="ph">Total → Diretoria → CC unificado</p><div class="bank-tree" id="bankTreePositive" aria-label="Árvore de horas positivas"></div></section>
+   <section class="panel"><h3>Horas negativas</h3><p class="ph">Total → Diretoria → CC unificado</p><div class="bank-tree negative" id="bankTreeNegative" aria-label="Árvore de horas negativas"></div></section>
+  </div>
+  <section class="panel bank-people-panel"><div class="bank-detail-toolbar"><h3>Banco de horas por colaborador</h3><label>Buscar nome, CC ou cargo<input id="bankPeopleSearch" type="search" placeholder="Digite para filtrar" autocomplete="off"></label></div>
+   <p class="ph" id="bankPeopleStatus" role="status"></p>
+   <div class="bank-people-scroll"><table><thead><tr><th>NOME</th><th>CC UNIFICADO</th><th>CARGO</th><th>HORAS +</th><th>HORAS −</th><th>SALDO (H)</th></tr></thead><tbody id="bankPeopleBody"></tbody></table></div>
+   <p id="bankPeopleTotals" class="ph"></p><div class="bank-detail-toolbar"><span id="bankPeopleCount" aria-live="polite"></span><div><button id="bankPeoplePrev" class="link-btn" type="button">Anterior</button><button id="bankPeopleNext" class="link-btn" type="button">Próxima</button></div></div>
+  </section>
+ </div>
     </div>
 
     <!-- TAB 3: MOVIMENTAÇÕES -->
@@ -836,7 +852,7 @@ document.getElementById('movImportForm').addEventListener('submit',async e=>{
   if(!/^(20\d{2}|2100)-(0[1-9]|1[0-2])$/.test(month))throw Error('Informe mês e ano válidos.');
   if(!file||!file.name.toLowerCase().endsWith('.xlsx'))throw Error('Selecione o arquivo .xlsx.');
   const rows=parseMovements(XLSX.read(await file.arrayBuffer(),{type:'array'}),month);
-  const {data,error}=await sb.rpc('panel_history_bundle',{p_turnover:month+'-01'});
+  const {data,error}=await sb.rpc('panel_bank_bundle',{p_turnover:month+'-01'});
   if(error)throw Error('Não foi possível consultar a base mensal.');
   if(session!==sessionGeneration||!movDialog.open)return;
   if(!data.turnover)throw Error('Importe primeiro a base de indicadores de turnover deste mês.');
@@ -869,7 +885,7 @@ document.getElementById('movCommit').addEventListener('click',async()=>{
   if(error)throw Error(error.message||'Falha ao salvar. Tente novamente.');
   if(session!==sessionGeneration)return;
   movPending=null;
-  const {data:bundle,error:loadError}=await sb.rpc('panel_history_bundle',{p_turnover:chosenTurnover||null,p_banco:chosenBanco||null});
+  const {data:bundle,error:loadError}=await sb.rpc('panel_bank_bundle',{p_turnover:chosenTurnover||null,p_banco:chosenBanco||null});
   if(loadError)throw Error('Importação salva. Entre novamente para atualizar a tela.');
   if(session!==sessionGeneration)return;
   applyHistory(bundle);document.getElementById('movMonthFilter').value=data.competence;buildFilterOptions();renderAll();movDialog.close();
@@ -901,6 +917,7 @@ function fillHistorySelect(id,kind,value){
  el.value=value||'';
 }
 function applyHistory(data){
+ bankPeople=data.bank_people?.rows||[];bankPeopleStatus=data.bank_people?'ready':data.bank_people_stale?'stale':'missing';resetBankView();
  historyCatalog=data.catalog||[];
  dataset=data.turnover?.rows||[];bankDataset=data.banco_horas?.rows||[];
  chosenTurnover=data.turnover?.competence||'';chosenBanco=data.banco_horas?.competence||'';
@@ -917,7 +934,7 @@ async function changeHistory(){
  const errorEl=document.getElementById('historyError');errorEl.textContent='Carregando competências…';
  document.getElementById('historyTurnover').disabled=true;document.getElementById('historyBanco').disabled=true;
  try{
-  const {data,error}=await sb.rpc('panel_history_bundle',{p_turnover:turnover||null,p_banco:banco||null});
+  const {data,error}=await sb.rpc('panel_bank_bundle',{p_turnover:turnover||null,p_banco:banco||null});
   if(error)throw error;
   if(session!==sessionGeneration||request!==historyRequest)return;
   applyHistory(data);
@@ -935,7 +952,7 @@ document.getElementById('historyTurnover').addEventListener('change',changeHisto
 document.getElementById('historyBanco').addEventListener('change',changeHistory);
 function resetImportPreview(){
  if(importBusy)return;
- pendingImport=null;document.getElementById('importPreview').replaceChildren();
+ pendingImport=null;bankImportDraft=null;document.getElementById('bankImportMappings').replaceChildren();document.getElementById('bankImportNote').textContent='';document.getElementById('importPreview').replaceChildren();
  document.getElementById('commitHistoryImport').disabled=true;
  document.getElementById('confirmRevisionWrap').hidden=true;document.getElementById('confirmRevision').checked=false;
  document.getElementById('importError').textContent='';
@@ -971,7 +988,8 @@ for(const id of ['importTurnover','importBanco','historyFile','importExtras'])do
 function setImportBusy(value){
  importBusy=value;
  for(const id of ['importMode','historyFile','analyzeHistoryImport','closeHistoryImport','confirmRevision'])document.getElementById(id).disabled=value;
- syncImportMode();document.getElementById('commitHistoryImport').disabled=value||!pendingImport;
+ syncImportMode();document.getElementById('commitHistoryImport').disabled=value||!pendingImport||pendingImport.bankReady===false;
+ for(const s of document.querySelectorAll('#bankImportMappings select'))s.disabled=value;
 }
 function parseSheetCompetence(value,wb){
  if(typeof value==='number'){
@@ -983,6 +1001,133 @@ function parseSheetCompetence(value,wb){
  if(/^(0[1-9]|1[0-2])\/(20\d{2}|2100)$/.test(s))return s.slice(3)+'-'+s.slice(0,2);
  throw Error('Competência inválida. Use o primeiro dia do mês como data, ou texto MM/AAAA.');
 }
+let bankPeople=[],bankPeopleStatus='missing',bankImportDraft=null;
+let bankTreeSelection={dir:'',cc:''},bankPeoplePage=0;
+const bankText=s=>String(s??'').trim();
+const bankNorm=s=>bankText(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').toUpperCase();
+const bankHours=n=>Number(n).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const bankRound=n=>Math.round((n+Number.EPSILON)*100)/100;
+function readBankPeople(wb,month){
+ const sheet=wb.Sheets['Base Banco'];if(!sheet)return null;
+ const matrix=XLSX.utils.sheet_to_json(sheet,{header:1,raw:true,defval:null,blankrows:false});
+ const head=(matrix[0]||[]).map(bankText);
+ const fields={empresa:'Empresa - Razão Social',nome:'Nome',cargo:'Cargo - Nome',cr:'Centro de Resultado - Código',nomeCR:'Centro de Resultado - Nome',year:'Ano',month:'Mês - Descrição',tipo:'Verba - Nome',hours:'SD a utilizar',cc:'CC Unificado',area:'Area',sourceDir:'Diretoria'};
+ const cols={};for(const [key,name] of Object.entries(fields)){
+  const indices=head.map((h,i)=>bankNorm(h)===bankNorm(name)?i:-1).filter(i=>i>=0);
+  if(indices.length!==1)throw Error('Base Banco: coluna ausente ou repetida: '+name);cols[key]=indices[0];
+ }
+ const monthNames=['JANEIRO','FEVEREIRO','MARCO','ABRIL','MAIO','JUNHO','JULHO','AGOSTO','SETEMBRO','OUTUBRO','NOVEMBRO','DEZEMBRO'];
+ const out=[],seen=new Set();
+ matrix.slice(1).forEach((row,index)=>{
+  if(row.every(v=>v==null||v===''))return;
+  const r=Object.fromEntries(Object.entries(cols).map(([k,i])=>[k,row[i]]));
+  for(const key of ['empresa','nome','cargo','cr','nomeCR','cc','area','sourceDir']){
+   r[key]=bankText(r[key]);if(!r[key]||r[key].startsWith('#')||/[<>]/.test(r[key]))throw Error('Base Banco, linha '+(index+2)+': confira '+fields[key]+'.');
+  }
+  const mi=monthNames.indexOf(bankNorm(r.month))+1;
+  if(!mi||Number(r.year)!==Number(month.slice(0,4))||mi!==Number(month.slice(5)))throw Error('Base Banco, linha '+(index+2)+': Ano e Mês - Descrição divergem da competência selecionada.');
+  const type=bankNorm(r.tipo);r.tipo=type==='SD ATUAL CREDITO'?'credito':type==='SD ATUAL DEBITO'?'debito':null;
+  if(!r.tipo)throw Error('Base Banco, linha '+(index+2)+': verba não reconhecida.');
+  if(typeof r.hours!=='number'||!Number.isFinite(r.hours)||Math.abs(r.hours)>1000000)throw Error('Base Banco, linha '+(index+2)+': saldo inválido. Recalcule e salve a planilha.');
+  if(r.tipo==='credito'&&r.hours<0)throw Error('Base Banco, linha '+(index+2)+': crédito com saldo negativo.');
+  const key=JSON.stringify([bankNorm(r.empresa),bankNorm(r.nome),r.cr,r.tipo]);
+  if(seen.has(key))throw Error('Base Banco, linha '+(index+2)+': colaborador repetido na mesma empresa, CR e tipo.');seen.add(key);
+  r.bhPos=r.tipo==='credito'?bankRound(Math.abs(r.hours)):0;r.bhNeg=r.tipo==='debito'?bankRound(Math.abs(r.hours)):0;
+  out.push(r);
+ });
+ if(out.length>20000)throw Error('Base Banco: limite de 20.000 registros por mês.');
+ return out;
+}
+function prepareBankPeopleImport(raw,summary){
+ bankImportDraft=null;if(raw===null)return;
+ const box=document.getElementById('bankImportMappings');box.replaceChildren();
+ const missing=[...new Set(raw.map(r=>r.cr))].filter(cr=>summary.filter(r=>String(r.cr)===cr).length!==1);
+ const selects=new Map();
+ for(const cr of missing){
+  const row=raw.find(r=>r.cr===cr),matches=summary.filter(r=>String(r.cr)===cr);
+  const label=document.createElement('label');label.className='bank-map-label';label.textContent='CR '+cr+' · '+row.nomeCR+' — confirme o gestor responsável';
+  const select=document.createElement('select');select.dataset.cr=cr;select.setAttribute('aria-label','Gestor do CR '+cr);select.add(new Option('Selecione o gestor',''));
+  const dirs=[...new Set((matches.length?matches:summary).map(r=>r.dir))].sort();dirs.forEach(dir=>select.add(new Option(dir,dir)));
+  label.append(select);box.append(label);selects.set(cr,select);
+ }
+ bankImportDraft={raw,summary,selects};
+ for(const select of selects.values())select.addEventListener('change',()=>{if(pendingImport)pendingImport.p_request_id=crypto.randomUUID();completeBankPeopleImport();});
+ completeBankPeopleImport();
+}
+function completeBankPeopleImport(){
+ if(!bankImportDraft||!pendingImport)return;
+ const {raw,summary,selects}=bankImportDraft;
+ const ready=[...selects.values()].every(s=>s.value);
+ pendingImport.p_people=null;pendingImport.bankReady=ready;
+ const note=document.getElementById('bankImportNote');
+ if(!ready){note.textContent='Confirme os gestores dos CRs acima para incluir todos os colaboradores.';document.getElementById('commitHistoryImport').disabled=true;return;}
+ const summaries=summary.map(r=>({...r,bhPos:0,bhNeg:0,contPos:0,contNeg:0}));
+ const people=raw.map(r=>{
+  const matches=summaries.filter(x=>String(x.cr)===r.cr);let dim=matches.length===1?matches[0]:matches.find(x=>x.dir===selects.get(r.cr)?.value);
+  if(!dim){dim={dir:selects.get(r.cr).value,area:r.area,cr:r.cr,nomeCR:r.nomeCR,cc:r.cc,estagio:'',bhPos:0,bhNeg:0,contPos:0,contNeg:0};summaries.push(dim);}
+  dim.bhPos=bankRound(dim.bhPos+r.bhPos);dim.bhNeg=bankRound(dim.bhNeg+r.bhNeg);dim[r.tipo==='credito'?'contPos':'contNeg']++;
+  return {empresa:r.empresa,nome:r.nome,cargo:r.cargo,cr:String(dim.cr),dir:dim.dir,tipo:r.tipo,bhPos:r.bhPos,bhNeg:r.bhNeg};
+ });
+ pendingImport.p_people=people;pendingImport.p_banco_rows=summaries;
+ const pos=people.reduce((s,r)=>s+r.bhPos,0),neg=people.reduce((s,r)=>s+r.bhNeg,0);
+ const oldPos=summary.reduce((s,r)=>s+r.bhPos,0),oldNeg=summary.reduce((s,r)=>s+Math.abs(r.bhNeg),0);
+ note.textContent=people.length+' registros individuais. Totais calculados pela Base Banco: '+bankHours(pos)+' h de crédito e '+bankHours(neg)+' h de débito.'+
+  ((Math.abs(pos-oldPos)>.01||Math.abs(neg-oldNeg)>.01)?' Atenção: os totais da aba Indicadores serão atualizados para incluir todos esses registros. Antes: '+bankHours(oldPos)+' h de crédito e '+bankHours(oldNeg)+' h de débito.':' Totais conferem com a aba Indicadores.')+
+  ' Valores em horas decimais, conforme a planilha.';
+ document.getElementById('commitHistoryImport').disabled=importBusy;
+}
+function resetBankView(){bankTreeSelection={dir:'',cc:''};bankPeoplePage=0;const search=document.getElementById('bankPeopleSearch');if(search)search.value='';}
+function bankTreeRows(){return bankDataset.filter(matchesFilters);}
+function bankSelectedRows(rows){return rows.filter(r=>(!bankTreeSelection.dir||r.dir===bankTreeSelection.dir)&&(!bankTreeSelection.cc||r.cc===bankTreeSelection.cc));}
+function makeBankTree(id,key){
+ const box=document.getElementById(id);box.replaceChildren();const rows=bankTreeRows();
+ const dirs=[...new Set(rows.map(r=>r.dir))];
+ if(bankTreeSelection.dir&&!dirs.includes(bankTreeSelection.dir))bankTreeSelection={dir:'',cc:''};
+ const total=rows.reduce((s,r)=>s+Math.abs(r[key]||0),0);
+ const groups=(rs,field)=>[...new Set(rs.map(r=>r[field]||'Sem classificação'))].map(name=>({name,value:rs.filter(r=>(r[field]||'Sem classificação')===name).reduce((s,r)=>s+Math.abs(r[key]||0),0)})).sort((a,b)=>b.value-a.value||a.name.localeCompare(b.name));
+ const column=(title,values,onClick,selected)=>{
+  const col=document.createElement('div');col.className='bank-tree-column';const heading=document.createElement('p');heading.className='bank-tree-heading';heading.textContent=title;col.append(heading);
+  const max=Math.max(...values.map(v=>v.value),1);
+  for(const v of values){const button=document.createElement('button');button.type='button';button.className='bank-tree-node';button.classList.toggle('selected',selected===v.name);button.setAttribute('aria-pressed',String(selected===v.name));
+   const label=document.createElement('span');label.textContent=v.name;const amount=document.createElement('strong');amount.textContent=bankHours(v.value)+' h';
+   const bar=document.createElement('i');bar.style.width=Math.max(0,v.value/max*100)+'%';button.append(label,amount,bar);button.onclick=()=>onClick(v.name);col.append(button);}
+  return col;
+ };
+ box.append(column('TOTAL',[{name:key==='bhPos'?'Horas positivas':'Horas negativas',value:total}],()=>{resetBankView();renderBankDetails();},''));
+ box.append(column('DIRETORIA',groups(rows,'dir'),name=>{bankTreeSelection={dir:bankTreeSelection.dir===name?'':name,cc:''};bankPeoplePage=0;renderBankDetails();},bankTreeSelection.dir));
+ if(bankTreeSelection.dir){
+  const rs=rows.filter(r=>r.dir===bankTreeSelection.dir);
+  const cc=groups(rs,'cc');if(bankTreeSelection.cc&&!cc.some(x=>x.name===bankTreeSelection.cc))bankTreeSelection.cc='';
+  box.append(column('CC UNIFICADO',cc,name=>{bankTreeSelection.cc=bankTreeSelection.cc===name?'':name;bankPeoplePage=0;renderBankDetails();},bankTreeSelection.cc));
+ }else{const hint=document.createElement('p');hint.className='bank-tree-tip';hint.textContent='Selecione uma diretoria para abrir os centros de custo.';box.append(hint);}
+}
+function getBankPeopleFiltered(){
+ const query=bankNorm(document.getElementById('bankPeopleSearch').value);
+ return bankSelectedRows(bankPeople.filter(matchesFilters)).filter(r=>!query||bankNorm([r.nome,r.cargo,r.cc].join(' ')).includes(query)).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
+}
+function renderBankDetails(){
+ makeBankTree('bankTreePositive','bhPos');makeBankTree('bankTreeNegative','bhNeg');
+ document.getElementById('bankTreePath').textContent=bankTreeSelection.dir?[bankTreeSelection.dir,bankTreeSelection.cc].filter(Boolean).join(' → '):'Todas as diretorias permitidas nos filtros atuais';
+ const status=document.getElementById('bankPeopleStatus');
+ status.textContent=bankPeopleStatus==='ready'?'Horas decimais · tabela acompanha os filtros e a seleção nas árvores.':bankPeopleStatus==='stale'?'Os totais deste mês foram revisados sem o detalhamento. Reimporte a base com a aba Base Banco para atualizar a tabela.':'Detalhamento ainda não importado para este mês. Importe a base mensal com a aba Base Banco.';
+ const rows=getBankPeopleFiltered(),pageSize=25;bankPeoplePage=Math.max(0,Math.min(bankPeoplePage,Math.ceil(rows.length/pageSize)-1));
+ const body=document.getElementById('bankPeopleBody');body.replaceChildren();
+ for(const r of rows.slice(bankPeoplePage*pageSize,(bankPeoplePage+1)*pageSize)){
+  const tr=document.createElement('tr');for(const [i,v] of [r.nome,r.cc,r.cargo,bankHours(r.bhPos),bankHours(r.bhNeg),bankHours(r.bhPos-r.bhNeg)].entries()){
+   const td=document.createElement('td');td.textContent=v;if(i>=3)td.className='bank-number';tr.append(td);
+  }body.append(tr);
+ }
+ if(!rows.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=6;td.textContent=bankPeopleStatus==='ready'?'Nenhum colaborador corresponde aos filtros.':'Sem detalhamento disponível.';tr.append(td);body.append(tr);}
+ document.getElementById('bankPeopleCount').textContent=rows.length+' registro(s) · página '+(bankPeoplePage+1)+' de '+Math.max(1,Math.ceil(rows.length/pageSize));
+ document.getElementById('bankPeoplePrev').disabled=bankPeoplePage===0;document.getElementById('bankPeopleNext').disabled=(bankPeoplePage+1)*pageSize>=rows.length;
+ const pos=rows.reduce((s,r)=>s+r.bhPos,0),neg=rows.reduce((s,r)=>s+r.bhNeg,0);
+ document.getElementById('bankPeopleTotals').textContent=bankPeopleStatus==='ready'?'Total dos registros filtrados: '+bankHours(pos)+' h positivas · '+bankHours(neg)+' h negativas · saldo '+bankHours(pos-neg)+' h':'';
+}
+document.getElementById('bankPeopleSearch').addEventListener('input',()=>{bankPeoplePage=0;renderBankDetails();});
+document.getElementById('bankPeoplePrev').addEventListener('click',()=>{bankPeoplePage--;renderBankDetails();});
+document.getElementById('bankPeopleNext').addEventListener('click',()=>{bankPeoplePage++;renderBankDetails();});
+document.getElementById('bankTreeClear').addEventListener('click',()=>{resetBankView();renderBankDetails();});
+
 function parseIndicators(wb,mode='consolidado',expected={}){
  const name=mode==='turnover'?'Turnover':mode==='banco_horas'?'Banco de Horas':'Indicadores';
  const sheet=wb.Sheets[name]||(mode!=='consolidado'?wb.Sheets['Indicadores']:null);
@@ -1041,11 +1186,13 @@ document.getElementById('historyImportForm').addEventListener('submit',async e=>
   for(const month of [turn,bh].filter(x=>x!==null))if(!/^(20\d{2}|2100)-(0[1-9]|1[0-2])$/.test(month))throw Error('Informe a competência de cada indicador selecionado.');
   const wb=XLSX.read(await file.arrayBuffer(),{type:'array'});
   const rows=parseIndicators(wb,mode,{turn,bh});
+  const bankRaw=bh?readBankPeople(wb,bh):null;
   const extras=mode==='consolidado'&&document.getElementById('importExtras').checked?parseExtraSheets(wb,rows):{};
-  const {data,error}=await sb.rpc('panel_history_bundle',{p_turnover:turn?turn+'-01':null,p_banco:bh?bh+'-01':null});
+  const {data,error}=await sb.rpc('panel_bank_bundle',{p_turnover:turn?turn+'-01':null,p_banco:bh?bh+'-01':null});
   if(error)throw Error('Não foi possível consultar o histórico. Confira sua conexão e a configuração do painel.');
   if(session!==sessionGeneration||!historyDialog.open)return;
   pendingImport={p_request_id:crypto.randomUUID(),p_source_name:file.name,p_turnover:turn?turn+'-01':null,p_banco:bh?bh+'-01':null,p_turnover_rows:turn?rows:null,p_banco_rows:bh?rows:null,p_extra:extras,p_expected_turnover:turn?(data.turnover?.revision||0):null,p_expected_banco:bh?(data.banco_horas?.revision||0):null};
+  pendingImport.p_expected_people=bh?(data.bank_people_revision||0):null;pendingImport.p_people=null;
   const texts=[file.name,rows.length+' linhas validadas.'];
   for(const [label,date,existing] of [['Turnover',turn,data.turnover],['Banco de horas',bh,data.banco_horas]]){
    texts.push(date?label+': '+monthLabel(date+'-01')+' — '+(existing?'período existente, '+existing.rows.length+' linhas na revisão '+existing.revision:'novo período')+'.':label+': sem alteração.');
@@ -1054,30 +1201,32 @@ document.getElementById('historyImportForm').addEventListener('submit',async e=>
   const summary=document.getElementById('importPreview');
   for(const text of texts){const p=document.createElement('p');p.textContent=text;summary.append(p);}
   document.getElementById('confirmRevisionWrap').hidden=!((turn&&data.turnover)||(bh&&data.banco_horas));
+  if(bh&&bankRaw===null)document.getElementById('bankImportNote').textContent='Aba Base Banco ausente: somente os totais serão importados. O detalhamento ficará indisponível se os totais mudarem.';
+  if(bankRaw!==null)prepareBankPeopleImport(bankRaw,rows);
   message.textContent='Confira as competências e a quantidade de linhas antes de confirmar.';
  }catch(err){message.textContent=err.message;pendingImport=null;}
  finally{setImportBusy(false);}
 });
 
 document.getElementById('commitHistoryImport').addEventListener('click',async()=>{
- if(importBusy||!pendingImport||currentUser?.role!=='admin')return;
+ if(importBusy||!pendingImport||pendingImport.bankReady===false||currentUser?.role!=='admin')return;
  const confirm=document.getElementById('confirmRevision').checked;
  const message=document.getElementById('importError');
  if(!document.getElementById('confirmRevisionWrap').hidden&&!confirm){message.textContent='Marque a confirmação de revisão para continuar.';return;}
  const session=sessionGeneration;setImportBusy(true);message.textContent='Salvando a importação…';
  let committed=false;
  try{
-  const {data,error}=await sb.rpc('panel_history_import_separate',{...pendingImport,p_confirm_revision:confirm});
+  const {data,error}=await sb.rpc('panel_import_with_bank',((({bankReady,...args})=>({...args,p_confirm_revision:confirm}))(pendingImport)));
   if(error)throw Error(error.message||'Não foi possível salvar. Você pode tentar novamente.');
   committed=true;
   if(session!==sessionGeneration)return;
   pendingImport=null;
-  const {data:bundle,error:loadError}=await sb.rpc('panel_history_bundle');
+  const {data:bundle,error:loadError}=await sb.rpc('panel_bank_bundle');
   if(loadError)throw Error('Importação salva, mas não foi possível atualizar a tela. Entre novamente para consultar os dados.');
   if(session!==sessionGeneration)return;
   applyHistory(bundle);filters={dir:'',area:'',cc:'',nomeCR:'',estagio:''};
   buildFilterOptions();buildSocioOptions();renderAll();historyDialog.close();
-  document.getElementById('historyError').textContent=(data.turnover?.changed||data.banco_horas?.changed||data.extrasChanged)?'Importação salva. Exibindo as competências mais recentes.':'Esse conteúdo já estava salvo. Nenhuma revisão foi duplicada.';
+  document.getElementById('historyError').textContent=(data.turnover?.changed||data.banco_horas?.changed||data.extrasChanged||data.peopleChanged)?'Importação salva. Exibindo as competências mais recentes.':'Esse conteúdo já estava salvo. Nenhuma revisão foi duplicada.';
  }catch(err){if(session===sessionGeneration)message.textContent=err.message;}
  finally{setImportBusy(false);if(committed)document.getElementById('commitHistoryImport').disabled=true;}
 });
@@ -1098,6 +1247,7 @@ function loginMessage(message){
   box.style.display = message ? 'block' : 'none';
 }
 function clearPanel(){
+ bankPeople=[];bankPeopleStatus='missing';resetBankView();document.getElementById('bankPeopleBody').replaceChildren();
  movDialog.close();resetMovementImport();document.getElementById('movMonthFilter').replaceChildren();
   sessionGeneration++;
   currentUser = null;
@@ -1120,7 +1270,7 @@ async function loadPanel(){
   if(identityError || !identity.user) throw Error('Sua sessão expirou. Entre novamente.');
   const {data:profile,error:profileError}=await sb.from('panel_profiles').select('name,role,dir,socio').eq('id',identity.user.id).single();
   if(profileError || !profile) throw Error('Este e-mail ainda não tem acesso autorizado ao painel.');
-  const {data,error}=await sb.rpc('panel_history_bundle');
+  const {data,error}=await sb.rpc('panel_bank_bundle');
   if(error) throw Error('Não foi possível carregar os dados do painel. Confira a configuração do banco.');
   if(generation!==sessionGeneration) return;
   currentUser={...profile,email:identity.user.email};
@@ -1626,6 +1776,7 @@ function renderCultura(rows){
 }
 
 function renderBanco(rows){
+  renderBankDetails();
   const bhPos = rows.reduce((s,d)=>s+d.bhPos,0);
   const bhNeg = rows.reduce((s,d)=>s+d.bhNeg,0);
   const contPos = rows.reduce((s,d)=>s+d.contPos,0);
